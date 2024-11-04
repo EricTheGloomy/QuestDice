@@ -5,7 +5,7 @@ using UnityEngine;
 public class MapInteraction : MonoBehaviour
 {
     public Camera _camera;
-    //public LayerMask interactableLayer;  // Assign in the Inspector
+    public LayerMask interactableLayer;  // Assign the interactable layer in the Inspector
     private IInteractable _lastSelectedTile;
 
     void Update()
@@ -22,8 +22,8 @@ public class MapInteraction : MonoBehaviour
             // Cast a ray from the camera to the mouse position
             Ray ray = _camera.ScreenPointToRay(mousePos);
 
-            //if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, interactableLayer))
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
+            // Use the interactableLayer mask in the Raycast to hit only specific objects
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, interactableLayer))
             {
                 IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
 

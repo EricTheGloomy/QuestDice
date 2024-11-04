@@ -396,7 +396,7 @@ MonoBehaviour:
   _camera: {fileID: 963194227}
   interactableLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
 --- !u!4 &1664913477
 Transform:
   m_ObjectHideFlags: 0

@@ -8,9 +8,11 @@ public class TileScript : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        // Check if a selection marker is assigned, otherwise create a default one
         if (_selectionMarker == null)
         {
-            Debug.LogWarning("Selection marker is not assigned in TileScript on " + gameObject.name);
+            Debug.LogWarning("Selection marker is not assigned in TileScript on " + gameObject.name + ". Creating a default marker.");
+            CreateDefaultSelectionMarker();
         }
     }
 
@@ -31,5 +33,15 @@ public class TileScript : MonoBehaviour, IInteractable
         {
             _selectionMarker.SetActive(newSelected);
         }
+    }
+
+    // Method to create a default selection marker if none is assigned
+    private void CreateDefaultSelectionMarker()
+    {
+        _selectionMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);  // Use a cube as a placeholder
+        _selectionMarker.transform.SetParent(transform);                    // Make it a child of the tile
+        _selectionMarker.transform.localPosition = Vector3.up * 0.5f;       // Position it slightly above the tile
+        _selectionMarker.transform.localScale = new Vector3(1, 0.1f, 1);    // Scale it down to make it look like a marker
+        _selectionMarker.SetActive(false);                                  // Initially set it to inactive
     }
 }
