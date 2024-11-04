@@ -34,7 +34,28 @@ public class HexCell : MonoBehaviour
         float y = -x - z;
         return new Vector3(x, y, z);
     }
-    
+
+    // Additional conversion methods
+    private Vector2 CubeToAxial(Vector3 cubeCoords)
+    {
+        float q = cubeCoords.x;
+        float r = cubeCoords.z;
+        return new Vector2(q, r);
+    }
+
+    private Vector2 AxialToOffset(Vector2 axialCoords)
+    {
+        float col = axialCoords.x + (axialCoords.y - ((int)axialCoords.y & 1)) / 2f;
+        float row = axialCoords.y;
+        return new Vector2(col, row);
+    }
+
+    private Vector2 CubeToOffset(Vector3 cubeCoords)
+    {
+        Vector2 axial = CubeToAxial(cubeCoords);
+        return AxialToOffset(axial);
+    }
+
     public void AddNeighbor(HexCell neighbor)
     {
         if (!Neighbors.Contains(neighbor))
