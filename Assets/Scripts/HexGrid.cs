@@ -18,6 +18,9 @@ public class HexGrid : MonoBehaviour
     public float _waterThreshold = 0.4f;
     public float _treesThreshold = 0.7f;
 
+    public HexTileData[] tileTypes; // Array of different terrain types (ScriptableObjects)
+    public Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
+
     void Start()
     {
         if (_noiseSeed == -1f)
@@ -25,72 +28,90 @@ public class HexGrid : MonoBehaviour
             _noiseSeed = Random.Range(0f, 10000000f);
         }
 
-        if (useFlatTop)
-            CreateFlatTopHexGrid();
-        else
-            CreatePointyTopHexGrid();
+        InitializeGrid();  // Initialize HexCells
+        AssignNeighbors();  // Assign neighbors for pathfinding
     }
 
-    private Vector2 GetFlatTopHexCoords(int x, int z)
+    private void InitializeGrid()
+    {
+        for (int x = 0; x < _mapWidth; x++)
+        {
+            for (int z = 0; z < _mapHeight; z++)
+            {
+                Vector2 offsetCoords = new Vector2(x, z);
+                HexTileData terrainType = SelectTerrainType(offsetCoords);
+
+                // Determine prefab based on terrain type
+                GameObject prefab = SelectPrefab(terrainType);
+
+                // Instantiate the tile at the calculated position
+                Vector3 position = useFlatTop ? 
+                    new Vector3(GetFlatTopHexCoords(x, z).x, 0, GetFlatTopHexCoords(x, z).y) : 
+                    new Vector3(GetPointyTopHexCoords(x, z).x, 0, GetPointyTopHexCoords(x, z).y);
+
+                GameObject tile = Instantiate(prefab, position, Quaternion.identity);
+
+                // Attach HexCell component and initialize
+                HexCell cell = tile.AddComponent<HexCell>();
+                cell.Initialize(this, offsetCoords, terrainType);
+
+                // Store in dictionary for easy lookup
+                cells[offsetCoords] = cell;
+            }
+        }
+    }
+
+    private HexTileData SelectTerrainType(Vector2 offsetCoords)
+    {
+        float noiseValue = Mathf.PerlinNoise((offsetCoords.x + _noiseSeed) / _noiseFrequency,
+                                             (offsetCoords.y + _noiseSeed) / _noiseFrequency);
+        if (noiseValue < _waterThreshold) return tileTypes[0];  // Water
+        if (noiseValue > _treesThreshold) return tileTypes[1];  // Trees
+        return tileTypes[2];  // Grass
+    }
+
+    private void AssignNeighbors()
+    {
+        foreach (var cellEntry in cells)
+        {
+            Vector2 offsetCoords = cellEntry.Key;
+            HexCell cell = cellEntry.Value;
+
+            Vector2[] neighborOffsets = (int)offsetCoords.y % 2 == 0
+                ? new Vector2[] { new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 1),
+                                  new Vector2(-1, 0), new Vector2(-1, -1), new Vector2(0, -1) }
+                : new Vector2[] { new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
+                                  new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, -1) };
+
+            foreach (Vector2 offset in neighborOffsets)
+            {
+                Vector2 neighborCoords = offsetCoords + offset;
+                if (cells.TryGetValue(neighborCoords, out HexCell neighbor))
+                {
+                    cell.AddNeighbor(neighbor);
+                }
+            }
+        }
+    }
+
+    public Vector2 GetFlatTopHexCoords(int x, int z)
     {
         float xPos = x * _tileSizeX * Mathf.Cos(Mathf.Deg2Rad * 30);
         float zPos = z * _tileSizeZ + ((x % 2 == 1) ? _tileSizeZ * 0.5f : 0);
         return new Vector2(xPos, zPos);
     }
 
-    private Vector2 GetPointyTopHexCoords(int x, int z)
+    public Vector2 GetPointyTopHexCoords(int x, int z)
     {
         float xPos = x * _tileSizeX + ((z % 2 == 1) ? _tileSizeX * 0.5f : 0);
         float zPos = z * _tileSizeZ * Mathf.Cos(Mathf.Deg2Rad * 30);
         return new Vector2(xPos, zPos);
     }
 
-    void CreateFlatTopHexGrid()
+    private GameObject SelectPrefab(HexTileData terrainType)
     {
-        for (int x = 0; x < _mapWidth; x++)
-        {
-            for (int z = 0; z < _mapHeight; z++)
-            {
-                Vector2 hexCoords = GetFlatTopHexCoords(x, z);
-                Vector3 position = new Vector3(hexCoords.x, 0, hexCoords.y);
-                GameObject prefab = SelectPrefab(hexCoords);
-                Instantiate(prefab, position, Quaternion.identity);
-            }
-        }
-    }
-
-    void CreatePointyTopHexGrid()
-    {
-        for (int x = 0; x < _mapWidth; x++)
-        {
-            for (int z = 0; z < _mapHeight; z++)
-            {
-                Vector2 hexCoords = GetPointyTopHexCoords(x, z);
-                Vector3 position = new Vector3(hexCoords.x, 0, hexCoords.y);
-                GameObject prefab = SelectPrefab(hexCoords);
-                Instantiate(prefab, position, Quaternion.identity);
-            }
-        }
-    }
-
-    private GameObject SelectPrefab(Vector2 hexCoords)
-    {
-        float noiseValue = Mathf.PerlinNoise((hexCoords.x + _noiseSeed) / _noiseFrequency, (hexCoords.y + _noiseSeed) / _noiseFrequency);
-        if (noiseValue < _waterThreshold) return _hexPrefabWater;
-        if (noiseValue > _treesThreshold) return _hexPrefabTrees;
-        return _hexPrefabGrass;
+        if (terrainType == tileTypes[0]) return _hexPrefabWater;  // Water
+        if (terrainType == tileTypes[1]) return _hexPrefabTrees;  // Trees
+        return _hexPrefabGrass;                                   // Grass
     }
 }
-
-
-    //TO DO
-    //replacing tiles for other tiles if X happens
-    //NEEDS design first - to do later
-    /*
-    public void ReplaceTile (GameObject oldTile, GameObject newTile)
-    {
-        Instantiate(newTile, oldTile.transform);
-        Destroy(oldTile);
-    }
-    */
-

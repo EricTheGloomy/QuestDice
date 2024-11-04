@@ -318,6 +318,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1298309613}
   - component: {fileID: 1298309612}
+  - component: {fileID: 1298309614}
   m_Layer: 0
   m_Name: GridManager
   m_TagString: Untagged
@@ -349,6 +350,10 @@ MonoBehaviour:
   _noiseFrequency: 20
   _waterThreshold: 0.3
   _treesThreshold: 0.6
+  tileTypes:
+  - {fileID: 11400000, guid: 6d60b80ccc0050e40b62dd8015f3dcde, type: 2}
+  - {fileID: 11400000, guid: 001e895528ed99b4d98db6c4d26017bb, type: 2}
+  - {fileID: 11400000, guid: 570fc900f383c6c4a94170f7edb584a3, type: 2}
 --- !u!4 &1298309613
 Transform:
   m_ObjectHideFlags: 0
@@ -364,6 +369,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1298309614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298309611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cdc3e5726291a54b88a9cd9d6c5a05a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 963194227}
+  neighborHighlightPrefab: {fileID: 6719262619009942249, guid: f372f2917d9072c4baf804cedeb11d46, type: 3}
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1664913475
 GameObject:
   m_ObjectHideFlags: 0
@@ -380,7 +402,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1664913476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -394,6 +416,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 963194227}
+  neighborHighlightPrefab: {fileID: 6719262619009942249, guid: f372f2917d9072c4baf804cedeb11d46, type: 3}
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
