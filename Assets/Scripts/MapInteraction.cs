@@ -5,7 +5,6 @@ using UnityEngine;
 public class MapInteraction : MonoBehaviour
 {
     public Camera _camera;
-    public GameObject neighborHighlightPrefab; // Prefab for highlighting neighbors (e.g., a small cube)
     public LayerMask interactableLayer;  // Layer for interactable objects
     private IInteractable _lastSelectedTile;
 
@@ -44,59 +43,11 @@ public class MapInteraction : MonoBehaviour
                 if (_lastSelectedTile != null && _lastSelectedTile != interactable)
                 {
                     _lastSelectedTile.OnDeselected();
-                    ClearHighlights(); // Clear previous highlights
                 }
 
                 interactable?.OnClicked();
                 _lastSelectedTile = interactable;
-
-                // Retrieve the HexCell component from the clicked GameObject
-                HexCell clickedCell = hit.transform.GetComponent<HexCell>();
-
-                // Check if the clicked object has a HexCell component and highlight neighbors
-                if (clickedCell != null)
-                {
-                    HighlightNeighbors(clickedCell);
-                }
             }
         }
-    }
-
-    // Method to spawn cubes on all neighbors of a clicked tile
-    void HighlightNeighbors(HexCell clickedCell)
-    {
-        ClearHighlights(); // Clear existing highlights
-
-        foreach (HexCell neighbor in clickedCell.Neighbors)
-        {
-            if (neighbor != null)
-            {
-                Vector2 neighborCoords;
-                
-                // Calculate world position based on grid orientation
-                if (hexGrid.useFlatTop)
-                {
-                    neighborCoords = hexGrid.GetFlatTopHexCoords((int)neighbor.OffsetCoordinates.x, (int)neighbor.OffsetCoordinates.y);
-                }
-                else
-                {
-                    neighborCoords = hexGrid.GetPointyTopHexCoords((int)neighbor.OffsetCoordinates.x, (int)neighbor.OffsetCoordinates.y);
-                }
-
-                Vector3 neighborPos = new Vector3(neighborCoords.x, 1.1f, neighborCoords.y); // Set Y position slightly above ground
-                GameObject highlight = Instantiate(neighborHighlightPrefab, neighborPos, Quaternion.identity);
-                currentHighlights.Add(highlight);
-            }
-        }
-    }
-
-    // Method to clear highlighted neighbors
-    void ClearHighlights()
-    {
-        foreach (GameObject highlight in currentHighlights)
-        {
-            Destroy(highlight);
-        }
-        currentHighlights.Clear();
     }
 }
