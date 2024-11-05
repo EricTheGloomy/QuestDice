@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 322b35aff0b1aad4396fe140ff365111, type: 3}
   m_Name: FogOfWar
   m_EditorClassIdentifier: 
-  ID: 0
+  ID: 1
   terrainName: 
   description: 
-  prefab: {fileID: 0}
-  movementCost: 1
+  prefab: {fileID: 5889105343811967633, guid: 167b12395f09fe24ba8cdff2fe49e5e0, type: 3}
+  movementCost: 0
   elevation: 0
-  isWalkable: 1
+  isWalkable: 0
   colorVariations: []
   textureVariations: []

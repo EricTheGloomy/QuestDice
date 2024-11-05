@@ -1,21 +1,22 @@
-using System.Collections.Generic;
+// HexCell.cs
 using UnityEngine;
+using System.Collections.Generic;
 
 public class HexCell : MonoBehaviour
 {
     public HexGrid Grid { get; private set; }
     public float HexSize { get; private set; }
-    public HexTileData TerrainType { get; private set; }
+    public HexTileData TerrainType { get; set; }
     public Vector2 OffsetCoordinates { get; private set; }
     public Vector3 CubeCoordinates { get; private set; }
     public Vector2 AxialCoordinates { get; private set; }
     public List<HexCell> Neighbors { get; private set; } = new List<HexCell>();
+    public GameObject VisualRepresentation { get; set; } // Holds the reference to the instantiated visual hex prefab
 
-    public void Initialize(HexGrid grid, Vector2 offsetCoords, HexTileData terrainType)
+    public void Initialize(HexGrid grid, Vector2 offsetCoords)
     {
         Grid = grid;
         OffsetCoordinates = offsetCoords;
-        TerrainType = terrainType;
         AxialCoordinates = OffsetToAxial(offsetCoords);
         CubeCoordinates = AxialToCube(AxialCoordinates);
     }
@@ -35,7 +36,6 @@ public class HexCell : MonoBehaviour
         return new Vector3(x, y, z);
     }
 
-    // Additional conversion methods
     private Vector2 CubeToAxial(Vector3 cubeCoords)
     {
         float q = cubeCoords.x;

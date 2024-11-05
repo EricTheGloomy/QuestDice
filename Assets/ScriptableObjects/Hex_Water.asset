@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 322b35aff0b1aad4396fe140ff365111, type: 3}
   m_Name: Hex_Water
   m_EditorClassIdentifier: 
-  ID: 0
+  ID: 4
   terrainName: 
   description: 
   prefab: {fileID: 3071199471604571427, guid: 9dba7d93cc4fbd947b2723059fd7020c, type: 3}

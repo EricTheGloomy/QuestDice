@@ -350,6 +350,7 @@ GameObject:
   - component: {fileID: 1298309613}
   - component: {fileID: 1298309612}
   - component: {fileID: 1298309614}
+  - component: {fileID: 1298309615}
   m_Layer: 0
   m_Name: GridManager
   m_TagString: Untagged
@@ -369,22 +370,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb4b2497aad5d14b9e5c306872c64e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hexPrefabGrass: {fileID: 5889105343811967633, guid: 72958fc2e3cfb594ba2c90038c905f04, type: 3}
-  _hexPrefabWater: {fileID: 3071199471604571427, guid: 9dba7d93cc4fbd947b2723059fd7020c, type: 3}
-  _hexPrefabTrees: {fileID: 9102411684979534659, guid: 3f1cff314d2413e49a165ff209559b56, type: 3}
-  _mapWidth: 20
-  _mapHeight: 20
-  _tileSizeX: 2
-  _tileSizeZ: 2
+  mapWidth: 10
+  mapHeight: 10
+  tileSizeX: 2
+  tileSizeZ: 2
   useFlatTop: 0
-  _noiseSeed: -1
-  _noiseFrequency: 20
-  _waterThreshold: 0.3
-  _treesThreshold: 0.6
-  tileTypes:
-  - {fileID: 11400000, guid: 6d60b80ccc0050e40b62dd8015f3dcde, type: 2}
-  - {fileID: 11400000, guid: 001e895528ed99b4d98db6c4d26017bb, type: 2}
-  - {fileID: 11400000, guid: 570fc900f383c6c4a94170f7edb584a3, type: 2}
+  hexMapParent: {fileID: 922353769}
 --- !u!4 &1298309613
 Transform:
   m_ObjectHideFlags: 0
@@ -417,6 +408,27 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &1298309615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298309611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05b76c95fb54e3d439509f489f8cf5f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basicHexPrefab: {fileID: 5889105343811967633, guid: 348a9b0d0d8065041ad63b168548096f, type: 3}
+  noiseSeed: -1
+  noiseFrequency: 10
+  waterThreshold: 0.3
+  treesThreshold: 0.6
+  tileTypes:
+  - {fileID: 11400000, guid: 6d60b80ccc0050e40b62dd8015f3dcde, type: 2}
+  - {fileID: 11400000, guid: 001e895528ed99b4d98db6c4d26017bb, type: 2}
+  - {fileID: 11400000, guid: 570fc900f383c6c4a94170f7edb584a3, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 322b35aff0b1aad4396fe140ff365111, type: 3}
   m_Name: Hex_Grass
   m_EditorClassIdentifier: 
-  ID: 0
+  ID: 2
   terrainName: 
   description: 
   prefab: {fileID: 5889105343811967633, guid: 72958fc2e3cfb594ba2c90038c905f04, type: 3}
