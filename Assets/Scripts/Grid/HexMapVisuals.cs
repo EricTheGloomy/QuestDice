@@ -22,7 +22,7 @@ public class HexMapVisuals : MonoBehaviour
         foreach (var cellEntry in hexGrid.cells)
         {
             HexCell cell = cellEntry.Value;
-            Vector3 position = HexCoordinateHelper.GetWorldPosition(cell.OffsetCoordinates, hexGrid.HexOrientation, hexGrid.tileSizeX, hexGrid.tileSizeZ);
+            Vector3 position = HexCoordinateHelper.GetWorldPosition(cell.OffsetCoordinates, hexGrid.UseFlatTopOrientation, hexGrid.tileSizeX, hexGrid.tileSizeZ);
             
             GameObject hexTile = Instantiate(basicHexPrefab, position, Quaternion.identity, cell.transform);
             cell.VisualRepresentation = hexTile;

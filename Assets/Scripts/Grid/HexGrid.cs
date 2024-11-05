@@ -8,7 +8,7 @@ public class HexGrid : MonoBehaviour
     public int mapHeight;
     public float tileSizeX = 2f;
     public float tileSizeZ = 2f;
-    public bool HexOrientation;  // true for flat-top, false for pointy-top
+    public bool UseFlatTopOrientation;  // true for flat-top, false for pointy-top
 
     public Transform hexMapParent;
     public Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
