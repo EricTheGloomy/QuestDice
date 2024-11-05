@@ -1,4 +1,4 @@
-// Scripts/HexMapVisuals.cs
+// Scripts/Grid/HexMapVisuals.cs
 using UnityEngine;
 
 [RequireComponent(typeof(HexGrid))]

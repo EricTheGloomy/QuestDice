@@ -1,4 +1,4 @@
-// Scripts/HexTileData.cs
+// Scripts/ScriptableObjects/HexTileData.cs
 using UnityEngine;
 using System.Collections.Generic;
 

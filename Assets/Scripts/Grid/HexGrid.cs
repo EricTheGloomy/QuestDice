@@ -1,4 +1,4 @@
-// Scripts/HexGrid.cs
+// Scripts/Grid/HexGrid.cs
 using System.Collections.Generic;
 using UnityEngine;
 
