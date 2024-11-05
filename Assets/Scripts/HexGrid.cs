@@ -34,8 +34,8 @@ public class HexGrid : MonoBehaviour
             {
                 Vector2 offsetCoords = new Vector2(x, z);
 
-                // Create a HexCell game object and set it as a child of hexMapParent
-                GameObject cellObj = new GameObject("HexCell");
+                // Create a HexCell game object with a unique name based on its coordinates
+                GameObject cellObj = new GameObject($"HexCell_{x}_{z}");
                 cellObj.transform.parent = hexMapParent;  // Parent to HexMap
                 HexCell cell = cellObj.AddComponent<HexCell>();
                 cell.Initialize(this, offsetCoords);
