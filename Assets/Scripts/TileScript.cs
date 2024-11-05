@@ -1,24 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
+// Scripts/Tiles/TileScript.cs
 using UnityEngine;
 
 public class TileScript : MonoBehaviour, IInteractable
 {
-    public GameObject _selectionMarker;
+    [SerializeField] private GameObject selectionMarker;  // Allows for flexibility in Unity Inspector
 
     private void Awake()
     {
-        // Check if a selection marker is assigned, otherwise create a default one
-        if (_selectionMarker == null)
+        Initialize();
+    }
+
+    public void Initialize()
+    {
+        // Create a default selection marker if none is assigned
+        if (selectionMarker == null)
         {
-            Debug.LogWarning("Selection marker is not assigned in TileScript on " + gameObject.name + ". Creating a default marker.");
+            Debug.LogWarning("Selection marker not assigned in TileScript on " + gameObject.name + ". Creating default.");
             CreateDefaultSelectionMarker();
         }
     }
 
     public void OnClicked()
     {
-        Debug.Log("Clicked tile: " + gameObject.name);
+        Debug.Log("Tile clicked: " + gameObject.name);
         SetSelected(true);
     }
 
@@ -27,21 +31,20 @@ public class TileScript : MonoBehaviour, IInteractable
         SetSelected(false);
     }
 
-    private void SetSelected(bool newSelected)
+    private void SetSelected(bool isSelected)
     {
-        if (_selectionMarker != null)
+        if (selectionMarker != null)
         {
-            _selectionMarker.SetActive(newSelected);
+            selectionMarker.SetActive(isSelected);
         }
     }
 
-    // Method to create a default selection marker if none is assigned
     private void CreateDefaultSelectionMarker()
     {
-        _selectionMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);  // Use a cube as a placeholder
-        _selectionMarker.transform.SetParent(transform);                    // Make it a child of the tile
-        _selectionMarker.transform.localPosition = Vector3.up * 0.5f;       // Position it slightly above the tile
-        _selectionMarker.transform.localScale = new Vector3(1, 0.1f, 1);    // Scale it down to make it look like a marker
-        _selectionMarker.SetActive(false);                                  // Initially set it to inactive
+        selectionMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        selectionMarker.transform.SetParent(transform);
+        selectionMarker.transform.localPosition = Vector3.up * 0.5f;
+        selectionMarker.transform.localScale = new Vector3(1, 0.1f, 1);
+        selectionMarker.SetActive(false);  
     }
 }

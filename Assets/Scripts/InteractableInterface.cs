@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+// Scripts/Interfaces/IInteractable.cs
 public interface IInteractable
 {
+    void Initialize();
     void OnClicked();
     void OnDeselected();
 }

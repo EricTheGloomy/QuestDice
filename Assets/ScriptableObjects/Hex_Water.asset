@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 322b35aff0b1aad4396fe140ff365111, type: 3}
   m_Name: Hex_Water
   m_EditorClassIdentifier: 
-  ID: 4
-  terrainName: 
-  description: 
-  prefab: {fileID: 3071199471604571427, guid: 9dba7d93cc4fbd947b2723059fd7020c, type: 3}
-  movementCost: 1
-  elevation: 0
-  isWalkable: 1
-  colorVariations: []
-  textureVariations: []
+  Id: 0
+  TerrainName: 
+  Description: 
+  Prefab: {fileID: 3071199471604571427, guid: 9dba7d93cc4fbd947b2723059fd7020c, type: 3}
+  MovementCost: 1
+  Elevation: 0
+  IsWalkable: 1
+  ColorVariations: []
+  TextureVariations: []

@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 322b35aff0b1aad4396fe140ff365111, type: 3}
   m_Name: Hex_Grass
   m_EditorClassIdentifier: 
-  ID: 2
-  terrainName: 
-  description: 
-  prefab: {fileID: 5889105343811967633, guid: 72958fc2e3cfb594ba2c90038c905f04, type: 3}
-  movementCost: 1
-  elevation: 0
-  isWalkable: 1
-  colorVariations: []
-  textureVariations: []
+  Id: 0
+  TerrainName: 
+  Description: 
+  Prefab: {fileID: 5889105343811967633, guid: 72958fc2e3cfb594ba2c90038c905f04, type: 3}
+  MovementCost: 1
+  Elevation: 0
+  IsWalkable: 1
+  ColorVariations: []
+  TextureVariations: []

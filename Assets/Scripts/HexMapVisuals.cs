@@ -1,31 +1,19 @@
-// HexMapVisuals.cs
-using System.Collections.Generic;
+// Scripts/HexMapVisuals.cs
 using UnityEngine;
 
 [RequireComponent(typeof(HexGrid))]
 public class HexMapVisuals : MonoBehaviour
 {
-    public GameObject basicHexPrefab;         // Basic hex prefab for each cell
-    public float noiseSeed = -1f;
-    public float noiseFrequency = 10f;
-    public float waterThreshold = 0.3f;
-    public float treesThreshold = 0.6f;
+    public GameObject basicHexPrefab;
+    public HexTileData[] tileTypes;
 
-    public HexTileData[] tileTypes;           // Array of terrain types
     private HexGrid hexGrid;
+    private float noiseSeed;
 
     void Start()
     {
         hexGrid = GetComponent<HexGrid>();
-        if (hexGrid == null)
-        {
-            Debug.LogError("HexGrid component not found.");
-            return;
-        }
-
-        if (noiseSeed == -1f)
-            noiseSeed = Random.Range(0f, 10000000f);
-
+        noiseSeed = Random.Range(0f, 10000000f);
         RenderMap();
     }
 
@@ -34,28 +22,18 @@ public class HexMapVisuals : MonoBehaviour
         foreach (var cellEntry in hexGrid.cells)
         {
             HexCell cell = cellEntry.Value;
-
-            // Get the position based on grid orientation
-            Vector3 position = hexGrid.useFlatTop
-                ? new Vector3(hexGrid.GetFlatTopHexCoords((int)cell.OffsetCoordinates.x, (int)cell.OffsetCoordinates.y).x, 0,
-                              hexGrid.GetFlatTopHexCoords((int)cell.OffsetCoordinates.x, (int)cell.OffsetCoordinates.y).y)
-                : new Vector3(hexGrid.GetPointyTopHexCoords((int)cell.OffsetCoordinates.x, (int)cell.OffsetCoordinates.y).x, 0,
-                              hexGrid.GetPointyTopHexCoords((int)cell.OffsetCoordinates.x, (int)cell.OffsetCoordinates.y).y);
-
-            // Instantiate a basic hex tile prefab as a child of the cell
+            Vector3 position = HexCoordinateHelper.GetWorldPosition(cell.OffsetCoordinates, hexGrid.HexOrientation, hexGrid.tileSizeX, hexGrid.tileSizeZ);
+            
             GameObject hexTile = Instantiate(basicHexPrefab, position, Quaternion.identity, cell.transform);
             cell.VisualRepresentation = hexTile;
 
-            ReplaceTileBasedOnNoise(cell, hexTile);
+            ApplyTerrainTypeBasedOnNoise(cell, hexTile);
         }
     }
 
-    private void ReplaceTileBasedOnNoise(HexCell cell, GameObject hexTile)
+    private void ApplyTerrainTypeBasedOnNoise(HexCell cell, GameObject hexTile)
     {
-        // Determine the terrain type based on noise
-        HexTileData terrainType = SelectTerrainType(cell.OffsetCoordinates);
-        
-        // Check if the noise-based terrain type is different from the default (basic) tile
+        HexTileData terrainType = DetermineTerrainType(cell.OffsetCoordinates);
         if (terrainType != cell.TerrainType)
         {
             cell.TerrainType = terrainType;
@@ -63,29 +41,26 @@ public class HexMapVisuals : MonoBehaviour
             // Destroy the basic tile
             Destroy(hexTile);
 
-            // Instantiate the appropriate prefab based on terrain type
-            GameObject terrainPrefab = SelectPrefab(terrainType);
-            GameObject newTile = Instantiate(terrainPrefab, hexTile.transform.position, Quaternion.identity, cell.transform);
-            cell.VisualRepresentation = newTile;
+            // Check if the terrainType's prefab is assigned
+            if (terrainType.Prefab != null)
+            {
+                GameObject terrainPrefab = terrainType.Prefab;
+                GameObject newTile = Instantiate(terrainPrefab, hexTile.transform.position, Quaternion.identity, cell.transform);
+                cell.VisualRepresentation = newTile;
 
-            ApplyVisualVariation(newTile, terrainType);  // Apply color/texture variations
+                ApplyVisualVariation(newTile, terrainType);
+            }
+            else
+            {
+                Debug.LogWarning($"Prefab not assigned for terrain type: {terrainType.TerrainName}. Please assign a prefab in the Inspector.");
+            }
         }
     }
 
-    private GameObject SelectPrefab(HexTileData terrainType)
+    private HexTileData DetermineTerrainType(Vector2 offsetCoords)
     {
-        if (terrainType == tileTypes[0]) return tileTypes[0].prefab;  // Water
-        if (terrainType == tileTypes[1]) return tileTypes[1].prefab;  // Trees
-        return tileTypes[2].prefab;                                   // Grass
-    }
-
-    private HexTileData SelectTerrainType(Vector2 offsetCoords)
-    {
-        float noiseValue = Mathf.PerlinNoise((offsetCoords.x + noiseSeed) / noiseFrequency,
-                                             (offsetCoords.y + noiseSeed) / noiseFrequency);
-        if (noiseValue < waterThreshold) return tileTypes[0];  // Water
-        if (noiseValue > treesThreshold) return tileTypes[1];  // Trees
-        return tileTypes[2];  // Grass
+        float noiseValue = Mathf.PerlinNoise((offsetCoords.x + noiseSeed) / 10f, (offsetCoords.y + noiseSeed) / 10f);
+        return noiseValue < 0.3f ? tileTypes[0] : noiseValue > 0.6f ? tileTypes[1] : tileTypes[2];
     }
 
     private void ApplyVisualVariation(GameObject tile, HexTileData terrainType)
@@ -93,10 +68,10 @@ public class HexMapVisuals : MonoBehaviour
         Renderer renderer = tile.GetComponent<Renderer>();
         if (renderer == null) return;
 
-        if (terrainType.colorVariations.Count > 0)
-            renderer.material.color = terrainType.colorVariations[Random.Range(0, terrainType.colorVariations.Count)];
+        if (terrainType.ColorVariations.Count > 0)
+            renderer.material.color = terrainType.ColorVariations[Random.Range(0, terrainType.ColorVariations.Count)];
 
-        if (terrainType.textureVariations.Count > 0)
-            renderer.material.mainTexture = terrainType.textureVariations[Random.Range(0, terrainType.textureVariations.Count)];
+        if (terrainType.TextureVariations.Count > 0)
+            renderer.material.mainTexture = terrainType.TextureVariations[Random.Range(0, terrainType.TextureVariations.Count)];
     }
 }

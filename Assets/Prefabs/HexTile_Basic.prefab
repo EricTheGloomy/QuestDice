@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fc9938a2aab0b54c9970c6433a2b7db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _selectionMarker: {fileID: 7590027216871454600}
+  selectionMarker: {fileID: 7590027216871454600}
 --- !u!33 &-44065953390284287
 MeshFilter:
   m_ObjectHideFlags: 0

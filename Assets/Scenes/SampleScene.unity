@@ -374,7 +374,7 @@ MonoBehaviour:
   mapHeight: 10
   tileSizeX: 2
   tileSizeZ: 2
-  useFlatTop: 0
+  HexOrientation: 0
   hexMapParent: {fileID: 922353769}
 --- !u!4 &1298309613
 Transform:
@@ -403,8 +403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cdc3e5726291a54b88a9cd9d6c5a05a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _camera: {fileID: 963194227}
-  neighborHighlightPrefab: {fileID: 6719262619009942249, guid: f372f2917d9072c4baf804cedeb11d46, type: 3}
+  mainCamera: {fileID: 963194227}
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -421,10 +420,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   basicHexPrefab: {fileID: 5889105343811967633, guid: 348a9b0d0d8065041ad63b168548096f, type: 3}
-  noiseSeed: -1
-  noiseFrequency: 10
-  waterThreshold: 0.3
-  treesThreshold: 0.6
   tileTypes:
   - {fileID: 11400000, guid: 6d60b80ccc0050e40b62dd8015f3dcde, type: 2}
   - {fileID: 11400000, guid: 001e895528ed99b4d98db6c4d26017bb, type: 2}

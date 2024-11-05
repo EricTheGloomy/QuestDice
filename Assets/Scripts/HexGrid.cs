@@ -1,4 +1,4 @@
-// HexGrid.cs
+// Scripts/HexGrid.cs
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,9 +8,9 @@ public class HexGrid : MonoBehaviour
     public int mapHeight;
     public float tileSizeX = 2f;
     public float tileSizeZ = 2f;
-    public bool useFlatTop = true;
+    public bool HexOrientation;  // true for flat-top, false for pointy-top
 
-    public Transform hexMapParent;  // Reference to the HexMap parent object in the hierarchy
+    public Transform hexMapParent;
     public Dictionary<Vector2, HexCell> cells = new Dictionary<Vector2, HexCell>();
 
     void Start()
@@ -21,7 +21,6 @@ public class HexGrid : MonoBehaviour
 
     private void InitializeGrid()
     {
-        // Ensure hexMapParent is set; otherwise, create a default one
         if (hexMapParent == null)
         {
             GameObject hexMapObj = new GameObject("HexMap");
@@ -33,14 +32,11 @@ public class HexGrid : MonoBehaviour
             for (int z = 0; z < mapHeight; z++)
             {
                 Vector2 offsetCoords = new Vector2(x, z);
-
-                // Create a HexCell game object with a unique name based on its coordinates
                 GameObject cellObj = new GameObject($"HexCell_{x}_{z}");
-                cellObj.transform.parent = hexMapParent;  // Parent to HexMap
+                cellObj.transform.parent = hexMapParent;
+                
                 HexCell cell = cellObj.AddComponent<HexCell>();
                 cell.Initialize(this, offsetCoords);
-
-                // Store cell in dictionary for easy lookup
                 cells[offsetCoords] = cell;
             }
         }
@@ -50,13 +46,12 @@ public class HexGrid : MonoBehaviour
     {
         foreach (var cellEntry in cells)
         {
-            Vector2 offsetCoords = cellEntry.Key;
             HexCell cell = cellEntry.Value;
+            Vector2[] neighborOffsets = GetNeighborOffsets((int)cell.OffsetCoordinates.y);
 
-            Vector2[] neighborOffsets = GetNeighborOffsets((int)offsetCoords.y);
             foreach (Vector2 offset in neighborOffsets)
             {
-                Vector2 neighborCoords = offsetCoords + offset;
+                Vector2 neighborCoords = cell.OffsetCoordinates + offset;
                 if (cells.TryGetValue(neighborCoords, out HexCell neighbor))
                 {
                     cell.AddNeighbor(neighbor);
@@ -68,23 +63,7 @@ public class HexGrid : MonoBehaviour
     private Vector2[] GetNeighborOffsets(int row)
     {
         return row % 2 == 0
-            ? new Vector2[] { new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 1),
-                              new Vector2(-1, 0), new Vector2(-1, -1), new Vector2(0, -1) }
-            : new Vector2[] { new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-                              new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, -1) };
-    }
-
-    public Vector2 GetFlatTopHexCoords(int x, int z)
-    {
-        float xPos = x * tileSizeX * Mathf.Cos(Mathf.Deg2Rad * 30);
-        float zPos = z * tileSizeZ + ((x % 2 == 1) ? tileSizeZ * 0.5f : 0);
-        return new Vector2(xPos, zPos);
-    }
-
-    public Vector2 GetPointyTopHexCoords(int x, int z)
-    {
-        float xPos = x * tileSizeX + ((z % 2 == 1) ? tileSizeX * 0.5f : 0);
-        float zPos = z * tileSizeZ * Mathf.Cos(Mathf.Deg2Rad * 30);
-        return new Vector2(xPos, zPos);
+            ? new Vector2[] { new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 1), new Vector2(-1, 0), new Vector2(-1, -1), new Vector2(0, -1) }
+            : new Vector2[] { new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, -1) };
     }
 }
