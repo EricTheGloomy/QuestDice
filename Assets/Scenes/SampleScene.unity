@@ -430,6 +430,7 @@ MonoBehaviour:
   persistence: 0.5
   lacunarity: 2
   offset: {x: 0, y: 0}
+  biomeConfig: {fileID: 11400000, guid: aeb78297bafcf4440bd5c35a28635b57, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

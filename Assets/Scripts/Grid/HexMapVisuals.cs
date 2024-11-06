@@ -37,6 +37,9 @@ public class HexMapVisuals : MonoBehaviour
     private Dictionary<TileType, HexTileData> tileDataDictionary;
     private HexGrid hexGrid;
 
+    [Header("Biome Config")]
+    public BiomeConfig biomeConfig;
+
     void Start()
     {
         if(seed == -1)
@@ -48,6 +51,7 @@ public class HexMapVisuals : MonoBehaviour
 
         InitializeTileDataDictionary();
         RenderMap();
+        SetRandomStartingLocation();
     }
 
     private void InitializeTileDataDictionary()
@@ -73,10 +77,22 @@ public class HexMapVisuals : MonoBehaviour
             HexCell cell = cellEntry.Value;
             Vector3 position = HexCoordinateHelper.GetWorldPosition(cell.OffsetCoordinates, hexGrid.UseFlatTopOrientation, hexGrid.tileSizeX, hexGrid.tileSizeZ);
 
-            GameObject hexTile = Instantiate(basicHexPrefab, position, Quaternion.identity, cell.transform);
-            cell.VisualRepresentation = hexTile;
+            TileType tileType = DetermineTileType(cell.OffsetCoordinates);
+            HexTileData tileData = tileDataDictionary[tileType];
 
-            AssignTileTypeBasedOnNoise(cell, hexTile);
+            if (tileData != null)
+            {
+                GameObject tile = TileFactory.CreateTile(tileData, position, cell.transform);
+                if (tile != null)
+                {
+                    cell.TerrainType = tileData;
+                    cell.VisualRepresentation = tile;
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"No data found for tile type: {tileType}. Please ensure all tile types have assigned data.");
+            }
         }
     }
 
@@ -102,13 +118,18 @@ public class HexMapVisuals : MonoBehaviour
         }
     }
 
-    private TileType DetermineTileType(Vector2 offsetCoords)
+    /*private TileType DetermineTileType(Vector2 offsetCoords)
     {
         float noiseValue = GenerateMultiOctaveNoise(offsetCoords);
         
         if (noiseValue < 0.3f) return TileType.Water;
         if (noiseValue > 0.6f) return TileType.Forest;
         return TileType.Grass;
+    }*/
+    private TileType DetermineTileType(Vector2 offsetCoords)
+    {
+        float noiseValue = GenerateMultiOctaveNoise(offsetCoords);
+        return biomeConfig.GetTileTypeForNoise(noiseValue);
     }
 
     private float GenerateMultiOctaveNoise(Vector2 offsetCoords)
@@ -142,4 +163,45 @@ public class HexMapVisuals : MonoBehaviour
 
         return Mathf.InverseLerp(-1f, 1f, noiseHeight); // Normalize to 0-1
     }
+
+    // In HexMapVisuals.cs
+    public void SetRandomStartingLocation()
+    {
+        // Collect all grass tiles
+        List<HexCell> grassTiles = new List<HexCell>();
+        foreach (var cell in hexGrid.cells.Values)
+        {
+            if (cell.TerrainType != null && cell.TerrainType.Type == TileType.Grass)
+            {
+                grassTiles.Add(cell);
+            }
+        }
+
+        // Choose a random grass tile as the starting location
+        if (grassTiles.Count == 0)
+        {
+            Debug.LogWarning("No grass tiles found on the map. Cannot set a starting location.");
+            return;
+        }
+
+        HexCell startCell = grassTiles[Random.Range(0, grassTiles.Count)];
+
+        // Disable fog on the starting tile and its neighbors
+        DisableFogInArea(startCell, 3);
+    }
+
+    // Helper method to disable fog in an area around a central tile
+    private void DisableFogInArea(HexCell centerCell, int range)
+    {
+        List<HexCell> hexesInRange = hexGrid.GetHexesInRange(centerCell, range);
+        foreach (HexCell cell in hexesInRange)
+        {
+            Transform fogOfWar = cell.VisualRepresentation.transform.Find("FogOfWar");
+            if (fogOfWar != null)
+            {
+                fogOfWar.gameObject.SetActive(false);
+            }
+        }
+    }
+
 }

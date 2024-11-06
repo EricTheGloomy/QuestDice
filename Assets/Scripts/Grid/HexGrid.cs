@@ -66,4 +66,37 @@ public class HexGrid : MonoBehaviour
             ? new Vector2[] { new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 1), new Vector2(-1, 0), new Vector2(-1, -1), new Vector2(0, -1) }
             : new Vector2[] { new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, -1) };
     }
+
+    public List<HexCell> GetHexesInRange(HexCell center, int range)
+    {
+        List<HexCell> hexesInRange = new List<HexCell>();
+        Queue<HexCell> frontier = new Queue<HexCell>();
+        HashSet<HexCell> visited = new HashSet<HexCell>();
+
+        frontier.Enqueue(center);
+        visited.Add(center);
+
+        int currentRange = 0;
+        while (frontier.Count > 0 && currentRange < range)
+        {
+            int levelSize = frontier.Count;
+            for (int i = 0; i < levelSize; i++)
+            {
+                HexCell current = frontier.Dequeue();
+                hexesInRange.Add(current);
+
+                foreach (HexCell neighbor in current.Neighbors)
+                {
+                    if (!visited.Contains(neighbor))
+                    {
+                        frontier.Enqueue(neighbor);
+                        visited.Add(neighbor);
+                    }
+                }
+            }
+            currentRange++;
+        }
+        return hexesInRange;
+    }
+
 }
