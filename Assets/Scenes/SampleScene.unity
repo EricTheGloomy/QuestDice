@@ -424,6 +424,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6d60b80ccc0050e40b62dd8015f3dcde, type: 2}
   - {fileID: 11400000, guid: 001e895528ed99b4d98db6c4d26017bb, type: 2}
   - {fileID: 11400000, guid: 570fc900f383c6c4a94170f7edb584a3, type: 2}
+  seed: -1
+  scale: 10
+  octaves: 8
+  persistence: 0.5
+  lacunarity: 2
+  offset: {x: 0, y: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

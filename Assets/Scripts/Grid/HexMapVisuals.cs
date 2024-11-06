@@ -6,16 +6,45 @@ using System.Collections.Generic;
 public class HexMapVisuals : MonoBehaviour
 {
     public GameObject basicHexPrefab;
-    public HexTileData[] tileDataArray;  // Populate this array in the Inspector
+    public HexTileData[] tileDataArray;
+
+    [Header("Noise Settings")]
+    /// <summary>
+    // public float scale
+    // Controls the "zoom" level of the noise. 
+    // Higher values create larger, smoother regions, while lower values create more detailed, smaller areas. 
+    // Setting scale too low or zero may result in overly noisy output or runtime errors.
+    // public int octaves
+    // The number of layers of noise added together to form the final map. 
+    // Each octave increases the detail level by adding noise at a different frequency and amplitude. 
+    // More octaves create more complex terrain but are computationally heavier.
+    // float persistence
+    // Controls the reduction in amplitude of each octave. 
+    // Lower values result in a smoother, more blended terrain, as each subsequent octave contributes less. 
+    // Values closer to 1 make octaves contribute more equally, producing rougher terrain.
+    //float lacunarity
+    // Controls the increase in frequency of each octave. 
+    // Higher values create increasingly smaller features in each octave, adding more high-frequency detail to the map.
+    /// </summary>
+    public int seed;
+    public float scale = 10f;
+    public int octaves = 4;
+    [Range(0, 1)] public float persistence = 0.5f;
+    public float lacunarity = 2.0f;
+    public Vector2 offset;
+
 
     private Dictionary<TileType, HexTileData> tileDataDictionary;
     private HexGrid hexGrid;
-    private float noiseSeed;
 
     void Start()
     {
+        if(seed == -1)
+        {
+            seed = Random.Range(0, 100000);
+        }
+
         hexGrid = GetComponent<HexGrid>();
-        noiseSeed = Random.Range(0f, 10000000f);
 
         InitializeTileDataDictionary();
         RenderMap();
@@ -58,8 +87,7 @@ public class HexMapVisuals : MonoBehaviour
 
         if (tileData != null)
         {
-            // Use TileFactory to create and configure the tile with appropriate prefab and variations
-            Destroy(hexTile); // Destroy the placeholder tile before replacing it
+            Destroy(hexTile);
             GameObject newTile = TileFactory.CreateTile(tileData, hexTile.transform.position, cell.transform);
 
             if (newTile != null)
@@ -76,9 +104,42 @@ public class HexMapVisuals : MonoBehaviour
 
     private TileType DetermineTileType(Vector2 offsetCoords)
     {
-        float noiseValue = Mathf.PerlinNoise((offsetCoords.x + noiseSeed) / 10f, (offsetCoords.y + noiseSeed) / 10f);
+        float noiseValue = GenerateMultiOctaveNoise(offsetCoords);
+        
         if (noiseValue < 0.3f) return TileType.Water;
         if (noiseValue > 0.6f) return TileType.Forest;
         return TileType.Grass;
+    }
+
+    private float GenerateMultiOctaveNoise(Vector2 offsetCoords)
+    {
+        if (scale <= 0) scale = 0.0001f; // Prevent division by zero
+
+        float amplitude = 1;
+        float frequency = 1;
+        float noiseHeight = 0;
+
+        System.Random prng = new System.Random(seed);
+        Vector2[] octaveOffsets = new Vector2[octaves];
+        for (int i = 0; i < octaves; i++)
+        {
+            float offsetX = prng.Next(-100000, 100000) + offset.x;
+            float offsetY = prng.Next(-100000, 100000) + offset.y;
+            octaveOffsets[i] = new Vector2(offsetX, offsetY);
+        }
+
+        for (int i = 0; i < octaves; i++)
+        {
+            float sampleX = (offsetCoords.x / scale * frequency) + octaveOffsets[i].x;
+            float sampleY = (offsetCoords.y / scale * frequency) + octaveOffsets[i].y;
+
+            float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
+            noiseHeight += perlinValue * amplitude;
+
+            amplitude *= persistence;
+            frequency *= lacunarity;
+        }
+
+        return Mathf.InverseLerp(-1f, 1f, noiseHeight); // Normalize to 0-1
     }
 }
