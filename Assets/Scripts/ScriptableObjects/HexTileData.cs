@@ -7,6 +7,7 @@ public class HexTileData : ScriptableObject
 {
     [Header("Basic Info")]
     public int Id;                     // Unique identifier for the terrain type
+    public TileType Type;
     public string TerrainName;          // Name of the terrain type
     [TextArea] public string Description; // Description of the terrain type
     public GameObject Prefab;           // Prefab reference for this terrain type

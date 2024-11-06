@@ -1,12 +1,14 @@
 // Scripts/Grid/HexMapVisuals.cs
 using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(HexGrid))]
 public class HexMapVisuals : MonoBehaviour
 {
     public GameObject basicHexPrefab;
-    public HexTileData[] tileTypes;
+    public HexTileData[] tileDataArray;  // Populate this array in the Inspector
 
+    private Dictionary<TileType, HexTileData> tileDataDictionary;
     private HexGrid hexGrid;
     private float noiseSeed;
 
@@ -14,7 +16,25 @@ public class HexMapVisuals : MonoBehaviour
     {
         hexGrid = GetComponent<HexGrid>();
         noiseSeed = Random.Range(0f, 10000000f);
+
+        InitializeTileDataDictionary();
         RenderMap();
+    }
+
+    private void InitializeTileDataDictionary()
+    {
+        tileDataDictionary = new Dictionary<TileType, HexTileData>();
+        foreach (var tileData in tileDataArray)
+        {
+            if (tileData != null)
+            {
+                tileDataDictionary[tileData.Type] = tileData;
+            }
+            else
+            {
+                Debug.LogWarning("Null entry in tileDataArray. Please check the array in the Inspector.");
+            }
+        }
     }
 
     private void RenderMap()
@@ -23,55 +43,42 @@ public class HexMapVisuals : MonoBehaviour
         {
             HexCell cell = cellEntry.Value;
             Vector3 position = HexCoordinateHelper.GetWorldPosition(cell.OffsetCoordinates, hexGrid.UseFlatTopOrientation, hexGrid.tileSizeX, hexGrid.tileSizeZ);
-            
+
             GameObject hexTile = Instantiate(basicHexPrefab, position, Quaternion.identity, cell.transform);
             cell.VisualRepresentation = hexTile;
 
-            ApplyTerrainTypeBasedOnNoise(cell, hexTile);
+            AssignTileTypeBasedOnNoise(cell, hexTile);
         }
     }
 
-    private void ApplyTerrainTypeBasedOnNoise(HexCell cell, GameObject hexTile)
+    private void AssignTileTypeBasedOnNoise(HexCell cell, GameObject hexTile)
     {
-        HexTileData terrainType = DetermineTerrainType(cell.OffsetCoordinates);
-        if (terrainType != cell.TerrainType)
+        TileType tileType = DetermineTileType(cell.OffsetCoordinates);
+        HexTileData tileData = tileDataDictionary[tileType];
+
+        if (tileData != null)
         {
-            cell.TerrainType = terrainType;
+            // Use TileFactory to create and configure the tile with appropriate prefab and variations
+            Destroy(hexTile); // Destroy the placeholder tile before replacing it
+            GameObject newTile = TileFactory.CreateTile(tileData, hexTile.transform.position, cell.transform);
 
-            // Destroy the basic tile
-            Destroy(hexTile);
-
-            // Check if the terrainType's prefab is assigned
-            if (terrainType.Prefab != null)
+            if (newTile != null)
             {
-                GameObject terrainPrefab = terrainType.Prefab;
-                GameObject newTile = Instantiate(terrainPrefab, hexTile.transform.position, Quaternion.identity, cell.transform);
+                cell.TerrainType = tileData;
                 cell.VisualRepresentation = newTile;
-
-                ApplyVisualVariation(newTile, terrainType);
             }
-            else
-            {
-                Debug.LogWarning($"Prefab not assigned for terrain type: {terrainType.TerrainName}. Please assign a prefab in the Inspector.");
-            }
+        }
+        else
+        {
+            Debug.LogWarning($"No data found for tile type: {tileType}. Please ensure all tile types have assigned data.");
         }
     }
 
-    private HexTileData DetermineTerrainType(Vector2 offsetCoords)
+    private TileType DetermineTileType(Vector2 offsetCoords)
     {
         float noiseValue = Mathf.PerlinNoise((offsetCoords.x + noiseSeed) / 10f, (offsetCoords.y + noiseSeed) / 10f);
-        return noiseValue < 0.3f ? tileTypes[0] : noiseValue > 0.6f ? tileTypes[1] : tileTypes[2];
-    }
-
-    private void ApplyVisualVariation(GameObject tile, HexTileData terrainType)
-    {
-        Renderer renderer = tile.GetComponent<Renderer>();
-        if (renderer == null) return;
-
-        if (terrainType.ColorVariations.Count > 0)
-            renderer.material.color = terrainType.ColorVariations[Random.Range(0, terrainType.ColorVariations.Count)];
-
-        if (terrainType.TextureVariations.Count > 0)
-            renderer.material.mainTexture = terrainType.TextureVariations[Random.Range(0, terrainType.TextureVariations.Count)];
+        if (noiseValue < 0.3f) return TileType.Water;
+        if (noiseValue > 0.6f) return TileType.Forest;
+        return TileType.Grass;
     }
 }

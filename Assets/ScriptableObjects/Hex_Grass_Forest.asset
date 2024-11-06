@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Hex_Grass_Forest
   m_EditorClassIdentifier: 
   Id: 0
+  Type: 2
   TerrainName: 
   Description: 
   Prefab: {fileID: 9102411684979534659, guid: 3f1cff314d2413e49a165ff209559b56, type: 3}
