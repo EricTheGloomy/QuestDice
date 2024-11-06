@@ -3,6 +3,8 @@ public enum TileType
 {
     Water,
     Grass,
-    Forest
+    Forest,
+    Hill,
+    Mountain
     // Add other tile types as needed
 }

@@ -418,8 +418,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb4b2497aad5d14b9e5c306872c64e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapWidth: 10
-  mapHeight: 10
+  mapWidth: 20
+  mapHeight: 20
   tileSizeX: 2
   tileSizeZ: 2
   UseFlatTopOrientation: 0
@@ -472,7 +472,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6d60b80ccc0050e40b62dd8015f3dcde, type: 2}
   - {fileID: 11400000, guid: 001e895528ed99b4d98db6c4d26017bb, type: 2}
   - {fileID: 11400000, guid: 570fc900f383c6c4a94170f7edb584a3, type: 2}
-  startingVision: 20
+  - {fileID: 11400000, guid: c6e83207ed1c22f4a9b0229471c17c7b, type: 2}
+  - {fileID: 11400000, guid: aaf9b4ece2a68664486ccfc7b88a2b01, type: 2}
+  startingVision: 99
   seed: -1
   scale: 10
   octaves: 8

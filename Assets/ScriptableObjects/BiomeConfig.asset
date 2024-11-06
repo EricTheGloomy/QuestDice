@@ -15,10 +15,16 @@ MonoBehaviour:
   thresholds:
   - TileType: 0
     MinThreshold: 0
-    MaxThreshold: 0.3
-  - TileType: 2
-    MinThreshold: 0.6
-    MaxThreshold: 1
+    MaxThreshold: 0.25
   - TileType: 1
-    MinThreshold: 0.3
-    MaxThreshold: 0.6
+    MinThreshold: 0.25
+    MaxThreshold: 0.5
+  - TileType: 2
+    MinThreshold: 0.5
+    MaxThreshold: 0.7
+  - TileType: 3
+    MinThreshold: 0.7
+    MaxThreshold: 0.85
+  - TileType: 4
+    MinThreshold: 0.85
+    MaxThreshold: 1
