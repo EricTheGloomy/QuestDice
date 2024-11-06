@@ -19,28 +19,37 @@ public class HexGrid : MonoBehaviour
         AssignNeighbors();
     }
 
-    private void InitializeGrid()
+// Scripts/Grid/HexGrid.cs
+private void InitializeGrid()
+{
+    if (hexMapParent == null)
     {
-        if (hexMapParent == null)
-        {
-            GameObject hexMapObj = new GameObject("HexMap");
-            hexMapParent = hexMapObj.transform;
-        }
+        GameObject hexMapObj = new GameObject("HexMap");
+        hexMapParent = hexMapObj.transform;
+    }
 
-        for (int x = 0; x < mapWidth; x++)
+    for (int x = 0; x < mapWidth; x++)
+    {
+        for (int z = 0; z < mapHeight; z++)
         {
-            for (int z = 0; z < mapHeight; z++)
-            {
-                Vector2 offsetCoords = new Vector2(x, z);
-                GameObject cellObj = new GameObject($"HexCell_{x}_{z}");
-                cellObj.transform.parent = hexMapParent;
-                
-                HexCell cell = cellObj.AddComponent<HexCell>();
-                cell.Initialize(this, offsetCoords);
-                cells[offsetCoords] = cell;
-            }
+            Vector2 offsetCoords = new Vector2(x, z);
+            GameObject cellObj = new GameObject($"HexCell_{x}_{z}");
+            cellObj.transform.parent = hexMapParent;
+            
+            HexCell cell = cellObj.AddComponent<HexCell>();
+            cell.Initialize(this, offsetCoords);
+
+            // Position the cell based on its grid coordinates
+            Vector3 cellPosition = HexCoordinateHelper.GetWorldPosition(offsetCoords, UseFlatTopOrientation, tileSizeX, tileSizeZ);
+            cellObj.transform.position = cellPosition;
+
+            cells[offsetCoords] = cell;
+
+            Debug.Log($"Initialized cell at offset ({x}, {z}) with position: {cellPosition}");
         }
     }
+}
+
 
     private void AssignNeighbors()
     {

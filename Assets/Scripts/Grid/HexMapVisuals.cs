@@ -7,6 +7,7 @@ public class HexMapVisuals : MonoBehaviour
 {
     public GameObject basicHexPrefab;
     public HexTileData[] tileDataArray;
+    public int startingVision;
 
     [Header("Noise Settings")]
     /// <summary>
@@ -34,7 +35,7 @@ public class HexMapVisuals : MonoBehaviour
     public Vector2 offset;
 
 
-    private Dictionary<TileType, HexTileData> tileDataDictionary;
+    public Dictionary<TileType, HexTileData> tileDataDictionary;
     private HexGrid hexGrid;
 
     [Header("Biome Config")]
@@ -118,14 +119,6 @@ public class HexMapVisuals : MonoBehaviour
         }
     }
 
-    /*private TileType DetermineTileType(Vector2 offsetCoords)
-    {
-        float noiseValue = GenerateMultiOctaveNoise(offsetCoords);
-        
-        if (noiseValue < 0.3f) return TileType.Water;
-        if (noiseValue > 0.6f) return TileType.Forest;
-        return TileType.Grass;
-    }*/
     private TileType DetermineTileType(Vector2 offsetCoords)
     {
         float noiseValue = GenerateMultiOctaveNoise(offsetCoords);
@@ -187,7 +180,7 @@ public class HexMapVisuals : MonoBehaviour
         HexCell startCell = grassTiles[Random.Range(0, grassTiles.Count)];
 
         // Disable fog on the starting tile and its neighbors
-        DisableFogInArea(startCell, 3);
+        DisableFogInArea(startCell, startingVision);
     }
 
     // Helper method to disable fog in an area around a central tile
