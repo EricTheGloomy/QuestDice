@@ -9,15 +9,23 @@ public class MapInteractionManager : MonoBehaviour
     private IInteractable lastSelectedTile;
 
     private HexGrid hexGrid;  
+    private TileEditor tileEditor;  // Reference to TileEditor component
     private List<GameObject> currentHighlights = new List<GameObject>(); 
 
     void Start()
     {
-        // Assume HexGrid is attached to the same GameObject
+        // Locate HexGrid and TileEditor components
         hexGrid = GetComponent<HexGrid>();
+        tileEditor = FindObjectOfType<TileEditor>(); // Find TileEditor in the scene
+
         if (hexGrid == null)
         {
             Debug.LogError("HexGrid component not found on GameObject.");
+        }
+
+        if (tileEditor == null)
+        {
+            Debug.LogWarning("TileEditor component not found in the scene.");
         }
 
         if (mainCamera == null)
@@ -50,6 +58,13 @@ public class MapInteractionManager : MonoBehaviour
             {
                 Debug.Log("Cannot interact with a tile that is covered by fog of war.");
                 return;
+            }
+
+            // Update selected cell in TileEditor if TileEditor is present
+            if (tileEditor != null)
+            {
+                tileEditor.selectedCell = clickedCell;
+                Debug.Log($"TileEditor selected tile updated to: {clickedCell.OffsetCoordinates}");
             }
 
             // Proceed with interaction if no fog is covering the tile

@@ -155,6 +155,9 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
+  selectedTileType: 0
+  radius: 0
+  selectedCell: {fileID: 0}
 --- !u!4 &444168068
 Transform:
   m_ObjectHideFlags: 0

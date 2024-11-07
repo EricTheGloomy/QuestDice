@@ -1,14 +1,19 @@
 // Scripts/Debug/TileEditor.cs
 using UnityEngine;
+using System.Collections.Generic;
 
+[ExecuteInEditMode]
 public class TileEditor : MonoBehaviour
 {
     [SerializeField] private Camera mainCamera;
     [SerializeField] private LayerMask interactableLayer;
 
-    private HexCell selectedCell;
-    private int currentTileTypeIndex;
-    private TileType[] tileTypes;
+    public TileType selectedTileType;  // Set through the custom editor
+    public int radius = 0;             // Set through the custom editor
+
+    public HexCell selectedCell;
+    private HexGrid hexGrid;
+    private HexMapVisuals hexMapVisuals;
 
     void Start()
     {
@@ -17,83 +22,95 @@ public class TileEditor : MonoBehaviour
             mainCamera = Camera.main;
         }
 
-        tileTypes = (TileType[])System.Enum.GetValues(typeof(TileType));
-        currentTileTypeIndex = 0;
-    }
+        hexGrid = FindObjectOfType<HexGrid>();
+        hexMapVisuals = FindObjectOfType<HexMapVisuals>();
 
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0)) // Left-click to select tile
+        if (hexGrid == null || hexMapVisuals == null)
         {
-            SelectTile();
-        }
-
-        if (selectedCell != null && Input.GetKeyDown(KeyCode.Space)) // Space to cycle tile type
-        {
-            CycleTileType();
+            Debug.LogError("HexGrid or HexMapVisuals not found in the scene.");
         }
     }
 
-    private void SelectTile()
+    // Selects the tile when clicked in the editor
+    public void SelectTile()
     {
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, interactableLayer))
         {
             selectedCell = hit.transform.GetComponentInParent<HexCell>();
-
-            if (selectedCell != null)
-            {
-                Debug.Log($"Selected tile at {selectedCell.OffsetCoordinates}, position: {selectedCell.transform.position}");
-                currentTileTypeIndex = System.Array.IndexOf(tileTypes, selectedCell.TerrainType.Type);
-            }
+            Debug.Log(selectedCell != null 
+                ? $"Tile selected at {selectedCell.OffsetCoordinates}." 
+                : "No tile selected.");
         }
     }
 
-    private void CycleTileType()
+    // Applies the selected tile type to the chosen cell and surrounding cells
+    public void ApplyTileType()
     {
-        // Move to the next tile type in the array
-        currentTileTypeIndex = (currentTileTypeIndex + 1) % tileTypes.Length;
-        TileType newTileType = tileTypes[currentTileTypeIndex];
+        if (selectedCell == null)
+        {
+            Debug.LogWarning("No tile selected. Click on a tile to select it first.");
+            return;
+        }
 
-        Debug.Log($"Changing tile at {selectedCell.OffsetCoordinates} to {newTileType}");
+        List<HexCell> cellsToChange = hexGrid.GetHexesInRange(selectedCell, radius);
 
-        // Update the tile visuals based on the new type
-        UpdateTileVisuals(selectedCell, newTileType);
+        foreach (HexCell cell in cellsToChange)
+        {
+            UpdateTileVisuals(cell, selectedTileType);
+        }
     }
 
+    // Sets fog of war on all tiles to active (cover all with fog)
+    public void ShowFogOfWar()
+    {
+        foreach (var cell in hexGrid.cells.Values)
+        {
+            Transform fogOfWar = cell.VisualRepresentation.transform.Find("FogOfWar");
+            if (fogOfWar != null)
+            {
+                fogOfWar.gameObject.SetActive(true);
+            }
+        }
+        Debug.Log("Fog of war enabled on all tiles.");
+    }
+
+    // Sets fog of war on all tiles to inactive (reveal all)
+    public void HideFogOfWar()
+    {
+        foreach (var cell in hexGrid.cells.Values)
+        {
+            Transform fogOfWar = cell.VisualRepresentation.transform.Find("FogOfWar");
+            if (fogOfWar != null)
+            {
+                fogOfWar.gameObject.SetActive(false);
+            }
+        }
+        Debug.Log("Fog of war disabled on all tiles.");
+    }
+
+    // Helper method to update tile visuals
     private void UpdateTileVisuals(HexCell cell, TileType newTileType)
     {
-        HexMapVisuals hexMapVisuals = FindObjectOfType<HexMapVisuals>();
-        if (hexMapVisuals == null || !hexMapVisuals.tileDataDictionary.ContainsKey(newTileType))
+        if (!hexMapVisuals.tileDataDictionary.ContainsKey(newTileType))
         {
-            Debug.LogError("TileData not found or HexMapVisuals is missing.");
+            Debug.LogError("TileData not found for the selected tile type.");
             return;
         }
 
         HexTileData tileData = hexMapVisuals.tileDataDictionary[newTileType];
-        
-        // Update cell's terrain type
         cell.TerrainType = tileData;
 
-        // Destroy current visual representation if it exists
         if (cell.VisualRepresentation != null)
         {
-            DestroyImmediate(cell.VisualRepresentation); // Immediate destruction to avoid overlaps
+            DestroyImmediate(cell.VisualRepresentation); // Ensure immediate destruction in the editor
         }
 
-        // Create the new visual representation at the cell's position
         GameObject newTile = TileFactory.CreateTile(tileData, cell.transform.position, cell.transform);
-
         if (newTile != null)
         {
-            // Explicitly set the new tile's local position to zero to avoid unintended offsets
             newTile.transform.localPosition = Vector3.zero;
             cell.VisualRepresentation = newTile;
-            Debug.Log($"New tile created at {cell.transform.position} for tile at {cell.OffsetCoordinates}");
-        }
-        else
-        {
-            Debug.LogError("Failed to create a new visual for the tile.");
         }
     }
 }
