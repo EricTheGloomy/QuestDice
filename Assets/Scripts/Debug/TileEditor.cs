@@ -9,7 +9,7 @@ public class TileEditor : MonoBehaviour
     [SerializeField] private LayerMask interactableLayer;
 
     public TileType selectedTileType;  // Set through the custom editor
-    public int radius = 0;             // Set through the custom editor
+    public int radius = 0;             // Tile application radius
 
     public HexCell selectedCell;
     private HexGrid hexGrid;
@@ -17,15 +17,11 @@ public class TileEditor : MonoBehaviour
 
     void Start()
     {
-        if (mainCamera == null)
-        {
-            mainCamera = Camera.main;
-        }
-
+        mainCamera = mainCamera ? mainCamera : Camera.main;
         hexGrid = FindObjectOfType<HexGrid>();
         hexMapVisuals = FindObjectOfType<HexMapVisuals>();
 
-        if (hexGrid == null || hexMapVisuals == null)
+        if (!hexGrid || !hexMapVisuals)
         {
             Debug.LogError("HexGrid or HexMapVisuals not found in the scene.");
         }
@@ -38,9 +34,6 @@ public class TileEditor : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, interactableLayer))
         {
             selectedCell = hit.transform.GetComponentInParent<HexCell>();
-            Debug.Log(selectedCell != null 
-                ? $"Tile selected at {selectedCell.OffsetCoordinates}." 
-                : "No tile selected.");
         }
     }
 
@@ -61,35 +54,27 @@ public class TileEditor : MonoBehaviour
         }
     }
 
-    // Sets fog of war on all tiles to active (cover all with fog)
+    // Enable fog of war on all tiles
     public void ShowFogOfWar()
     {
         foreach (var cell in hexGrid.cells.Values)
         {
-            Transform fogOfWar = cell.VisualRepresentation.transform.Find("FogOfWar");
-            if (fogOfWar != null)
-            {
-                fogOfWar.gameObject.SetActive(true);
-            }
+            var fog = cell.VisualRepresentation?.transform.Find("FogOfWar");
+            if (fog) fog.gameObject.SetActive(true);
         }
-        Debug.Log("Fog of war enabled on all tiles.");
     }
 
-    // Sets fog of war on all tiles to inactive (reveal all)
+    // Disable fog of war on all tiles
     public void HideFogOfWar()
     {
         foreach (var cell in hexGrid.cells.Values)
         {
-            Transform fogOfWar = cell.VisualRepresentation.transform.Find("FogOfWar");
-            if (fogOfWar != null)
-            {
-                fogOfWar.gameObject.SetActive(false);
-            }
+            var fog = cell.VisualRepresentation?.transform.Find("FogOfWar");
+            if (fog) fog.gameObject.SetActive(false);
         }
-        Debug.Log("Fog of war disabled on all tiles.");
     }
 
-    // Helper method to update tile visuals
+    // Updates the visuals for the specified tile based on the selected type
     private void UpdateTileVisuals(HexCell cell, TileType newTileType)
     {
         if (!hexMapVisuals.tileDataDictionary.ContainsKey(newTileType))
@@ -103,7 +88,7 @@ public class TileEditor : MonoBehaviour
 
         if (cell.VisualRepresentation != null)
         {
-            DestroyImmediate(cell.VisualRepresentation); // Ensure immediate destruction in the editor
+            DestroyImmediate(cell.VisualRepresentation);
         }
 
         GameObject newTile = TileFactory.CreateTile(tileData, cell.transform.position, cell.transform);

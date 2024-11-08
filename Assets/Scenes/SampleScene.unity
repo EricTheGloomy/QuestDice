@@ -240,7 +240,7 @@ MonoBehaviour:
   minZoom: 10
   maxZoom: 80
   zoomSpeed: 10
-  startHeight: 10
+  startHeight: 20
   cameraOffset: {x: 0, y: 10, z: -10}
   initialTiltAngle: 60
   mapCenter: {x: 0, y: 0, z: 0}
@@ -477,7 +477,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!1 &1298309611
 GameObject:
   m_ObjectHideFlags: 0

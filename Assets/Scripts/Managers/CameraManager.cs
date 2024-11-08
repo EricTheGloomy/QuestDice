@@ -76,8 +76,10 @@ public class CameraManager : MonoBehaviour
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
         {
-            cameraOffset += cameraTransform.forward * scroll * zoomSpeed;
-            cameraOffset.y = Mathf.Clamp(cameraOffset.y, minZoom, maxZoom);
+            Vector3 newOffset = cameraOffset + cameraTransform.forward * scroll * zoomSpeed;
+            newOffset.y = Mathf.Clamp(newOffset.y, minZoom, maxZoom);  // Ensure zoom only affects y-axis
+
+            cameraOffset = newOffset;  // Update offset only after clamping
         }
     }
 

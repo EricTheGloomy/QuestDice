@@ -7,35 +7,18 @@ public class HexMapVisuals : MonoBehaviour
 {
     public GameObject basicHexPrefab;
     public HexTileData[] tileDataArray;
-    public int startingVision;
-    private HexCell startingLocation;   // Store starting location cell
-    public HexCell GetStartingLocation() => startingLocation; // Public getter for starting location
+    public int startingVision = 3;
+    private HexCell startingLocation;   
+
+    public HexCell GetStartingLocation() => startingLocation;
 
     [Header("Noise Settings")]
-    /// <summary>
-    // public float scale
-    // Controls the "zoom" level of the noise. 
-    // Higher values create larger, smoother regions, while lower values create more detailed, smaller areas. 
-    // Setting scale too low or zero may result in overly noisy output or runtime errors.
-    // public int octaves
-    // The number of layers of noise added together to form the final map. 
-    // Each octave increases the detail level by adding noise at a different frequency and amplitude. 
-    // More octaves create more complex terrain but are computationally heavier.
-    // float persistence
-    // Controls the reduction in amplitude of each octave. 
-    // Lower values result in a smoother, more blended terrain, as each subsequent octave contributes less. 
-    // Values closer to 1 make octaves contribute more equally, producing rougher terrain.
-    //float lacunarity
-    // Controls the increase in frequency of each octave. 
-    // Higher values create increasingly smaller features in each octave, adding more high-frequency detail to the map.
-    /// </summary>
     public int seed;
     public float scale = 10f;
     public int octaves = 4;
     [Range(0, 1)] public float persistence = 0.5f;
     public float lacunarity = 2.0f;
     public Vector2 offset;
-
 
     public Dictionary<TileType, HexTileData> tileDataDictionary;
     public HexGrid hexGrid;
@@ -45,18 +28,15 @@ public class HexMapVisuals : MonoBehaviour
 
     void Start()
     {
-        if(seed == -1)
-        {
-            seed = Random.Range(0, 100000);
-        }
+        if (seed == -1) seed = Random.Range(0, 100000);
 
         hexGrid = GetComponent<HexGrid>();
-
         InitializeTileDataDictionary();
         RenderMap();
         SetRandomStartingLocation();
     }
 
+    // Initializes dictionary for tile types
     private void InitializeTileDataDictionary()
     {
         tileDataDictionary = new Dictionary<TileType, HexTileData>();
@@ -66,19 +46,18 @@ public class HexMapVisuals : MonoBehaviour
             {
                 tileDataDictionary[tileData.Type] = tileData;
             }
-            else
-            {
-                Debug.LogWarning("Null entry in tileDataArray. Please check the array in the Inspector.");
-            }
         }
     }
 
+    // Render tiles based on noise configuration and tile data
     private void RenderMap()
     {
         foreach (var cellEntry in hexGrid.cells)
         {
             HexCell cell = cellEntry.Value;
-            Vector3 position = HexCoordinateHelper.GetWorldPosition(cell.OffsetCoordinates, hexGrid.UseFlatTopOrientation, hexGrid.tileSizeX, hexGrid.tileSizeZ);
+            Vector3 position = HexCoordinateHelper.GetWorldPosition(
+                cell.OffsetCoordinates, hexGrid.UseFlatTopOrientation, hexGrid.tileSizeX, hexGrid.tileSizeZ
+            );
 
             TileType tileType = DetermineTileType(cell.OffsetCoordinates);
             HexTileData tileData = tileDataDictionary[tileType];
@@ -86,38 +65,9 @@ public class HexMapVisuals : MonoBehaviour
             if (tileData != null)
             {
                 GameObject tile = TileFactory.CreateTile(tileData, position, cell.transform);
-                if (tile != null)
-                {
-                    cell.TerrainType = tileData;
-                    cell.VisualRepresentation = tile;
-                }
-            }
-            else
-            {
-                Debug.LogWarning($"No data found for tile type: {tileType}. Please ensure all tile types have assigned data.");
-            }
-        }
-    }
-
-    private void AssignTileTypeBasedOnNoise(HexCell cell, GameObject hexTile)
-    {
-        TileType tileType = DetermineTileType(cell.OffsetCoordinates);
-        HexTileData tileData = tileDataDictionary[tileType];
-
-        if (tileData != null)
-        {
-            Destroy(hexTile);
-            GameObject newTile = TileFactory.CreateTile(tileData, hexTile.transform.position, cell.transform);
-
-            if (newTile != null)
-            {
                 cell.TerrainType = tileData;
-                cell.VisualRepresentation = newTile;
+                cell.VisualRepresentation = tile;
             }
-        }
-        else
-        {
-            Debug.LogWarning($"No data found for tile type: {tileType}. Please ensure all tile types have assigned data.");
         }
     }
 
@@ -156,10 +106,10 @@ public class HexMapVisuals : MonoBehaviour
             frequency *= lacunarity;
         }
 
-        return Mathf.InverseLerp(-1f, 1f, noiseHeight); // Normalize to 0-1
+        return Mathf.InverseLerp(-1f, 1f, noiseHeight); 
     }
 
-    // In HexMapVisuals.cs
+    // Sets a random starting location on a grass tile and disables fog in the vicinity
     public void SetRandomStartingLocation()
     {
         List<HexCell> grassTiles = new List<HexCell>();
@@ -171,29 +121,20 @@ public class HexMapVisuals : MonoBehaviour
             }
         }
 
-        if (grassTiles.Count == 0)
+        if (grassTiles.Count > 0)
         {
-            Debug.LogWarning("No grass tiles found on the map. Cannot set a starting location.");
-            return;
+            startingLocation = grassTiles[Random.Range(0, grassTiles.Count)];
+            DisableFogInArea(startingLocation, startingVision);
         }
-
-        startingLocation = grassTiles[Random.Range(0, grassTiles.Count)]; // Set the starting location
-
-        DisableFogInArea(startingLocation, startingVision); // Disable fog at start
     }
 
-    // Helper method to disable fog in an area around a central tile
     private void DisableFogInArea(HexCell centerCell, int range)
     {
         List<HexCell> hexesInRange = hexGrid.GetHexesInRange(centerCell, range);
         foreach (HexCell cell in hexesInRange)
         {
-            Transform fogOfWar = cell.VisualRepresentation.transform.Find("FogOfWar");
-            if (fogOfWar != null)
-            {
-                fogOfWar.gameObject.SetActive(false);
-            }
+            var fog = cell.VisualRepresentation?.transform.Find("FogOfWar");
+            if (fog) fog.gameObject.SetActive(false);
         }
     }
-
 }
