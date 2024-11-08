@@ -8,6 +8,8 @@ public class HexMapVisuals : MonoBehaviour
     public GameObject basicHexPrefab;
     public HexTileData[] tileDataArray;
     public int startingVision;
+    private HexCell startingLocation;   // Store starting location cell
+    public HexCell GetStartingLocation() => startingLocation; // Public getter for starting location
 
     [Header("Noise Settings")]
     /// <summary>
@@ -36,7 +38,7 @@ public class HexMapVisuals : MonoBehaviour
 
 
     public Dictionary<TileType, HexTileData> tileDataDictionary;
-    private HexGrid hexGrid;
+    public HexGrid hexGrid;
 
     [Header("Biome Config")]
     public BiomeConfig biomeConfig;
@@ -160,7 +162,6 @@ public class HexMapVisuals : MonoBehaviour
     // In HexMapVisuals.cs
     public void SetRandomStartingLocation()
     {
-        // Collect all grass tiles
         List<HexCell> grassTiles = new List<HexCell>();
         foreach (var cell in hexGrid.cells.Values)
         {
@@ -170,17 +171,15 @@ public class HexMapVisuals : MonoBehaviour
             }
         }
 
-        // Choose a random grass tile as the starting location
         if (grassTiles.Count == 0)
         {
             Debug.LogWarning("No grass tiles found on the map. Cannot set a starting location.");
             return;
         }
 
-        HexCell startCell = grassTiles[Random.Range(0, grassTiles.Count)];
+        startingLocation = grassTiles[Random.Range(0, grassTiles.Count)]; // Set the starting location
 
-        // Disable fog on the starting tile and its neighbors
-        DisableFogInArea(startCell, startingVision);
+        DisableFogInArea(startingLocation, startingVision); // Disable fog at start
     }
 
     // Helper method to disable fog in an area around a central tile
