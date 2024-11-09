@@ -545,6 +545,7 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
+  tileEditor: {fileID: 0}
 --- !u!114 &1298309615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -573,6 +574,54 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   hexGrid: {fileID: 0}
   biomeConfig: {fileID: 11400000, guid: aeb78297bafcf4440bd5c35a28635b57, type: 2}
+--- !u!1 &2031368959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2031368961}
+  - component: {fileID: 2031368960}
+  m_Layer: 0
+  m_Name: TESTING
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2031368960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2031368959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a76c7b196547d424b8212fd5196656c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  newTileType: 0
+  objectToPlace: {fileID: 919132149155446097, guid: a972da7c187711140a1382db1775c51f, type: 3}
+  revealRadius: 1
+  enableFogOnChange: 0
+--- !u!4 &2031368961
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2031368959}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -584,3 +633,4 @@ SceneRoots:
   - {fileID: 444168068}
   - {fileID: 628319135}
   - {fileID: 403357659}
+  - {fileID: 2031368961}

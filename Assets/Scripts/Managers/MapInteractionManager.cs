@@ -9,7 +9,7 @@ public class MapInteractionManager : MonoBehaviour
     private IInteractable lastSelectedTile;
 
     private HexGrid hexGrid;  
-    private TileEditor tileEditor;  // Reference to TileEditor component
+    public TileEditor tileEditor;  // Reference to TileEditor component
     private List<GameObject> currentHighlights = new List<GameObject>(); 
 
     void Start()
