@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77dcd479ffe52ba45bd3e88121de9ceb, type: 3}
+  m_Name: CutDownAbility
+  m_EditorClassIdentifier: 
+  abilityName: Cut Down
+  actionCost: 1
+  icon: {fileID: 0}
+  restrictions:
+  - {fileID: 11400000, guid: 029e152d4e6052f43bdbbc8e07b712d5, type: 2}
+  replacementTileType: 1
+  enableFogOnChange: 0

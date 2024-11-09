@@ -9,11 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77dcd479ffe52ba45bd3e88121de9ceb, type: 3}
-  m_Name: CutDownAbility
+  m_Script: {fileID: 11500000, guid: ccd1abe33deaf574791835c5c5784c57, type: 3}
+  m_Name: ForestOnlyRestriction
   m_EditorClassIdentifier: 
-  abilityName: Cut Down
-  actionCost: 1
-  icon: {fileID: 0}
-  replacementTileType: 1
-  enableFogOnChange: 0

@@ -9,10 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b36d9aa4d992dc8498bcb4c5eae08c7c, type: 3}
-  m_Name: BuildAbility
+  m_Script: {fileID: 11500000, guid: 8cf8baf2fbccead4383691cca59e4d66, type: 3}
+  m_Name: GrassOnlyRestriction
   m_EditorClassIdentifier: 
-  abilityName: Build
-  actionCost: 1
-  icon: {fileID: 0}
-  objectToBuild: {fileID: 919132149155446097, guid: c40b722824182ef48b886e8ead439f53, type: 3}

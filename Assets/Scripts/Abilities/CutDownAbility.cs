@@ -9,17 +9,23 @@ public class CutDownAbility : Ability
 
     public override void ExecuteAbility(HexCell selectedCell, TurnManager turnManager)
     {
+        if (!CanExecute(selectedCell, out string restrictionMessage))
+        {
+            Debug.LogWarning(restrictionMessage);
+            return;
+        }
+
         if (turnManager.SpendActions(actionCost))
         {
             HexMapVisuals hexMapVisuals = FindObjectOfType<HexMapVisuals>();
-            if (selectedCell.TerrainType.Type == TileType.Forest && hexMapVisuals != null)
+            if (hexMapVisuals != null)
             {
                 HexGridHelper.ChangeHexType(selectedCell, replacementTileType, hexMapVisuals, enableFogOnChange);
                 Debug.Log("Cutting down forest and changing to grass.");
             }
             else
             {
-                Debug.LogWarning("Selected tile is not forest or HexMapVisuals not found.");
+                Debug.LogError("HexMapVisuals not found in the scene.");
             }
         }
     }

@@ -8,17 +8,16 @@ public class BuildAbility : Ability
 
     public override void ExecuteAbility(HexCell selectedCell, TurnManager turnManager)
     {
+        if (!CanExecute(selectedCell, out string restrictionMessage))
+        {
+            Debug.LogWarning(restrictionMessage);
+            return;
+        }
+
         if (turnManager.SpendActions(actionCost))
         {
-            if (objectToBuild != null)
-            {
-                HexGridHelper.PlaceObjectOnHex(selectedCell, objectToBuild);
-                Debug.Log("Building on the selected hex cell.");
-            }
-            else
-            {
-                Debug.LogWarning("Object to build is not assigned.");
-            }
+            HexGridHelper.PlaceObjectOnHex(selectedCell, objectToBuild);
+            Debug.Log("Building on the selected hex cell.");
         }
     }
 }
