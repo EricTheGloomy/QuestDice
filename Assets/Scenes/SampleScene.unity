@@ -238,11 +238,10 @@ MonoBehaviour:
   moveSpeed: 10
   rotationSpeed: 50
   minZoom: 10
-  maxZoom: 80
+  maxZoom: 25
   zoomSpeed: 10
-  startHeight: 20
-  cameraOffset: {x: 0, y: 10, z: -10}
-  initialTiltAngle: 60
+  cameraOffset: {x: 0, y: 12, z: -10}
+  initialTiltAngle: 50
   mapCenter: {x: 0, y: 0, z: 0}
   mapLimitX: 0
   mapLimitZ: 0

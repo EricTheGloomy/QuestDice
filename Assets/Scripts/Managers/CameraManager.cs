@@ -3,23 +3,23 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    public Transform cameraTransform;        // Assign Main Camera transform in the Inspector
-    public Transform cameraTarget;           // Assign CameraTarget (empty GameObject) in the Inspector
-    public float moveSpeed = 10f;            // Speed of camera target movement
-    public float rotationSpeed = 50f;        // Speed of rotation with Q and E keys
-    public float minZoom = 10f;              // Minimum zoom level
-    public float maxZoom = 80f;              // Maximum zoom level
-    public float zoomSpeed = 10f;            // Speed of zoom with mouse scroll
-    public float startHeight = 20f;          // Initial height of the camera above the target
-    public Vector3 cameraOffset = new Vector3(0, 20, -20);  // Offset of the camera relative to target
+    public Transform cameraTransform;         // Reference to Main Camera
+    public Transform cameraTarget;            // Reference to CameraTarget GameObject (focus point)
+    public float moveSpeed = 10f;             // Speed of moving the camera target
+    public float rotationSpeed = 50f;         // Speed of rotating the camera around the target
+    public float minZoom = 10f;               // Minimum zoom level (height above target)
+    public float maxZoom = 80f;               // Maximum zoom level
+    public float zoomSpeed = 10f;             // Zoom in/out speed
+    public Vector3 cameraOffset = new Vector3(0, 20, -20);  // Offset of camera relative to target
 
-    [SerializeField] private float initialTiltAngle = 45f;  // Tilt angle for camera to look down at the target
-    [SerializeField] private Vector3 mapCenter;             // Center of the map
-    [SerializeField] private float mapLimitX;               // X-axis movement limit based on map size
-    [SerializeField] private float mapLimitZ;               // Z-axis movement limit based on map size
+    [SerializeField] private float initialTiltAngle = 45f;  // Starting tilt angle for the camera
+    [SerializeField] private Vector3 mapCenter;             // Center of the map, calculated from HexGrid
+    [SerializeField] private float mapLimitX;               // X-axis map boundary limit
+    [SerializeField] private float mapLimitZ;               // Z-axis map boundary limit
 
     private void Start()
     {
+        // Find and validate HexMapVisuals and HexGrid references
         HexMapVisuals hexMapVisuals = FindObjectOfType<HexMapVisuals>();
         if (hexMapVisuals == null)
         {
@@ -27,8 +27,7 @@ public class CameraManager : MonoBehaviour
             return;
         }
 
-        // Set map boundaries and initial position for camera target
-        SetMapBounds(hexMapVisuals);
+        SetMapBounds(hexMapVisuals);          // Initialize map boundary limits
         InitializeCameraTargetPosition(hexMapVisuals);
     }
 
@@ -40,16 +39,18 @@ public class CameraManager : MonoBehaviour
         UpdateCameraPosition();
     }
 
-    // Move the camera target within XZ plane
+    // Handle WASD or arrow keys for moving the camera target based on its rotation
     private void HandleMovement()
     {
         float horizontal = Input.GetAxis("Horizontal");  // A/D or Left/Right arrows
         float vertical = Input.GetAxis("Vertical");      // W/S or Up/Down arrows
 
-        Vector3 movement = new Vector3(horizontal, 0, vertical).normalized * moveSpeed * Time.deltaTime;
+        // Move relative to the cameraTarget's orientation
+        Vector3 direction = (cameraTarget.forward * vertical + cameraTarget.right * horizontal).normalized;
+        Vector3 movement = direction * moveSpeed * Time.deltaTime;
         cameraTarget.position += movement;
 
-        // Constrain the target within the map boundaries
+        // Constrain the camera target within map boundaries
         cameraTarget.position = new Vector3(
             Mathf.Clamp(cameraTarget.position.x, mapCenter.x - mapLimitX, mapCenter.x + mapLimitX),
             cameraTarget.position.y,
@@ -57,40 +58,44 @@ public class CameraManager : MonoBehaviour
         );
     }
 
-    // Rotate the camera target with Q and E keys
+    // Rotate the camera around the target using Q and E keys
     private void HandleRotation()
     {
         if (Input.GetKey(KeyCode.Q))
         {
+            // Rotate both camera and target to the left
             cameraTransform.RotateAround(cameraTarget.position, Vector3.up, -rotationSpeed * Time.deltaTime);
+            cameraTarget.Rotate(Vector3.up, -rotationSpeed * Time.deltaTime, Space.World);
         }
         else if (Input.GetKey(KeyCode.E))
         {
+            // Rotate both camera and target to the right
             cameraTransform.RotateAround(cameraTarget.position, Vector3.up, rotationSpeed * Time.deltaTime);
+            cameraTarget.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
         }
     }
 
-    // Zoom in/out with mouse scroll wheel
+    // Zoom in/out using mouse scroll
     private void HandleZoom()
     {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
         {
             Vector3 newOffset = cameraOffset + cameraTransform.forward * scroll * zoomSpeed;
-            newOffset.y = Mathf.Clamp(newOffset.y, minZoom, maxZoom);  // Ensure zoom only affects y-axis
+            newOffset.y = Mathf.Clamp(newOffset.y, minZoom, maxZoom); 
 
-            cameraOffset = newOffset;  // Update offset only after clamping
+            cameraOffset = newOffset;
         }
     }
 
-    // Set the camera position based on target's position and offset
+    // Update the camera's position relative to the target and apply rotation
     private void UpdateCameraPosition()
     {
         cameraTransform.position = cameraTarget.position + cameraOffset;
-        cameraTransform.LookAt(cameraTarget.position);
+        //cameraTransform.LookAt(cameraTarget.position); //causes problems wwith rotation at min and max zooms
     }
 
-    // Define the map boundaries based on HexGrid size
+    // Calculate map boundaries based on HexGrid size and configuration
     private void SetMapBounds(HexMapVisuals hexMapVisuals)
     {
         float mapWidth = hexMapVisuals.hexGrid.mapWidth * hexMapVisuals.hexGrid.tileSizeX;
@@ -101,20 +106,24 @@ public class CameraManager : MonoBehaviour
         mapLimitZ = mapHeight / 2;
     }
 
-    // Position the camera target at the starting location on the map
+    // Initialize camera target position at the starting location on the map
     private void InitializeCameraTargetPosition(HexMapVisuals hexMapVisuals)
     {
-        HexCell startCell = hexMapVisuals.GetStartingLocation(); // Retrieve the starting location
+        HexCell startCell = hexMapVisuals.GetStartingLocation(); 
 
         if (startCell != null)
         {
             cameraTarget.position = startCell.transform.position;
-            UpdateCameraPosition();
-            Debug.Log($"Camera target initialized at {cameraTarget.position}");
+
+            // Apply the initial tilt angle to the camera's rotation
+            cameraTransform.position = cameraTarget.position + cameraOffset;
+            cameraTransform.rotation = Quaternion.Euler(initialTiltAngle, cameraTransform.rotation.eulerAngles.y, 0);
+
+            Debug.Log($"Camera initialized at {cameraTransform.position} with tilt {initialTiltAngle}");
         }
         else
         {
-            Debug.LogWarning("Starting cell not found. Please verify starting location in HexGrid.");
+            Debug.LogWarning("Starting cell not found. Verify starting location in HexGrid.");
         }
     }
 }
