@@ -1509,7 +1509,7 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
-  tileEditor: {fileID: 0}
+  tileEditor: {fileID: 444168067}
 --- !u!114 &1298309615
 MonoBehaviour:
   m_ObjectHideFlags: 0
