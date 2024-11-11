@@ -17,5 +17,5 @@ MonoBehaviour:
   icon: {fileID: 0}
   restrictions:
   - {fileID: 11400000, guid: 029e152d4e6052f43bdbbc8e07b712d5, type: 2}
-  replacementTileType: 1
+  replacementTerrainID: 1
   enableFogOnChange: 0
