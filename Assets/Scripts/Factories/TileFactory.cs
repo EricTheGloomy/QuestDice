@@ -8,7 +8,7 @@ public static class TileFactory
     {
         if (tileData == null || tileData.Prefab == null)
         {
-            Debug.LogWarning($"Tile data or prefab is missing for tile type: {tileData?.Type}");
+            Debug.LogWarning($"Tile data or prefab is missing for terrain: {tileData?.TerrainName}");
             return null;
         }
 

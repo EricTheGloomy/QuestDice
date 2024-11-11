@@ -1,10 +1,12 @@
 // Scripts/Enums/TileType.cs
-public enum TileType
+
+//TO REMOVE
+/*public enum TileType
 {
     Water,
-    Grass,
-    Forest,
-    Hill,
-    Mountain
-    // Add other tile types as needed
-}
+    Grassland,
+    Plains,
+    Swamp,
+    Desert,
+    Snow
+}*/

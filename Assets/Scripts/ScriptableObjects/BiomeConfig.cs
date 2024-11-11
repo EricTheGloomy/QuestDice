@@ -8,14 +8,15 @@ public class BiomeConfig : ScriptableObject
     [System.Serializable]
     public struct TileTypeThreshold
     {
-        public TileType TileType;
-        public float MinThreshold;
-        public float MaxThreshold;
+        public int terrainID;           // Unique terrain ID for the tile type
+        public float MinThreshold;      // Minimum noise threshold for this type
+        public float MaxThreshold;      // Maximum noise threshold for this type
     }
 
     public TileTypeThreshold[] thresholds;
 
-    public TileType GetTileTypeForNoise(float noiseValue)
+    // Returns the appropriate terrainID based on the given noise value
+    public int GetTerrainIDForNoise(float noiseValue)
     {
         for (int i = 0; i < thresholds.Length; i++)
         {
@@ -25,15 +26,16 @@ public class BiomeConfig : ScriptableObject
             if (i == thresholds.Length - 1)
             {
                 if (noiseValue >= threshold.MinThreshold && noiseValue <= threshold.MaxThreshold)
-                    return threshold.TileType;
+                    return threshold.terrainID;
             }
             // For all other thresholds, treat Max as exclusive
             else
             {
                 if (noiseValue >= threshold.MinThreshold && noiseValue < threshold.MaxThreshold)
-                    return threshold.TileType;
+                    return threshold.terrainID;
             }
         }
-        return TileType.Grass; // Default type if none match
+        Debug.LogWarning("No matching terrainID found for noise value. Returning default terrainID.");
+        return 0; // Return a default terrainID if none match
     }
 }

@@ -6,11 +6,13 @@ public class GrassOnlyRestriction : AbilityRestrictionBase
 {
     public override bool IsMet(HexCell targetCell)
     {
-        return targetCell.TerrainType.Type == TileType.Grass;
+        // Temporary change: Adjust logic for future ability use conditions
+        // TODO: Consider new conditions or custom field for ability restrictions
+        return targetCell.TerrainType.TerrainName == "Grassland";  // Placeholder terrain type
     }
 
     public override string GetRestrictionMessage()
     {
-        return "Ability can only be used on grass tiles.";
+        return "Ability can only be used on grassland tiles.";
     }
 }

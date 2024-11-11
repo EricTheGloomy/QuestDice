@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 2909652309525489307}
   - component: {fileID: -44065953390284287}
   m_Layer: 6
-  m_Name: HexTile_Basic
+  m_Name: HexTile_Default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -168,6 +168,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionMarker: {fileID: 7590027216871454600}
+  fogOfWar: {fileID: 5301644799246344547}
+  groundObjects: {fileID: 4942604563142561361}
 --- !u!33 &-44065953390284287
 MeshFilter:
   m_ObjectHideFlags: 0

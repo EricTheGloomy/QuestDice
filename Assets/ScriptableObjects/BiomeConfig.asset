@@ -13,18 +13,21 @@ MonoBehaviour:
   m_Name: BiomeConfig
   m_EditorClassIdentifier: 
   thresholds:
-  - TileType: 0
+  - terrainID: 1
     MinThreshold: 0
     MaxThreshold: 0.25
-  - TileType: 1
+  - terrainID: 2
     MinThreshold: 0.25
-    MaxThreshold: 0.5
-  - TileType: 2
-    MinThreshold: 0.5
+    MaxThreshold: 0.35
+  - terrainID: 3
+    MinThreshold: 0.35
     MaxThreshold: 0.7
-  - TileType: 3
+  - terrainID: 4
     MinThreshold: 0.7
-    MaxThreshold: 0.85
-  - TileType: 4
-    MinThreshold: 0.85
     MaxThreshold: 1
+  - terrainID: 5
+    MinThreshold: 888
+    MaxThreshold: 8888
+  - terrainID: 6
+    MinThreshold: 999
+    MaxThreshold: 9999

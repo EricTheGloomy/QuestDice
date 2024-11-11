@@ -33,21 +33,21 @@ public static class HexGridHelper
             Object.Destroy(child.gameObject);
         }
 
-        // Instantiate the new object at the anchor's position and set a Y offset if needed
+        // Instantiate the new object at the anchor's position
         GameObject placedObject = Object.Instantiate(objectToPlace, objectAnchor);
-        //placedObject.transform.localPosition = new Vector3(0, 0, 0); // Adjust Y offset if needed
+        placedObject.transform.localPosition = Vector3.zero; // Adjust position if needed
     }
 
     // Changes the type of the selected hex cell and sets fog based on enableFog parameter
-    public static void ChangeHexType(HexCell selectedCell, TileType newTileType, HexMapVisuals hexMapVisuals, bool enableFog)
+    public static void ChangeHexType(HexCell selectedCell, int terrainID, HexMapVisuals hexMapVisuals, bool enableFog)
     {
-        if (!hexMapVisuals.tileDataDictionary.ContainsKey(newTileType))
+        if (!hexMapVisuals.tileDataDictionary.ContainsKey(terrainID))
         {
-            Debug.LogError($"TileType {newTileType} does not exist in tileDataDictionary.");
+            Debug.LogError($"Terrain ID {terrainID} does not exist in tileDataDictionary.");
             return;
         }
 
-        HexTileData newTileData = hexMapVisuals.tileDataDictionary[newTileType];
+        HexTileData newTileData = hexMapVisuals.tileDataDictionary[terrainID];
 
         // Replace the current visual representation with the new type
         if (selectedCell.VisualRepresentation != null)

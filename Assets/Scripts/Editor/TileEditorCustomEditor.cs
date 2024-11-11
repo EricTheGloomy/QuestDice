@@ -11,7 +11,8 @@ public class TileEditorCustomEditor : Editor
 
         EditorGUILayout.LabelField("Tile Editing Options", EditorStyles.boldLabel);
 
-        tileEditor.selectedTileType = (TileType)EditorGUILayout.EnumPopup("Tile Type", tileEditor.selectedTileType);
+        // Update to use `selectedTerrainID` instead of `selectedTileType`
+        tileEditor.selectedTerrainID = EditorGUILayout.IntField("Terrain ID", tileEditor.selectedTerrainID);
         tileEditor.radius = EditorGUILayout.IntSlider("Radius", tileEditor.radius, 0, 10);
 
         if (GUILayout.Button("Select Tile"))
@@ -24,6 +25,7 @@ public class TileEditorCustomEditor : Editor
             tileEditor.ApplyTileType();
         }
 
+        // Directly call ShowFogOfWar and HideFogOfWar without null checks
         if (GUILayout.Button("Show Fog of War"))
         {
             tileEditor.ShowFogOfWar();

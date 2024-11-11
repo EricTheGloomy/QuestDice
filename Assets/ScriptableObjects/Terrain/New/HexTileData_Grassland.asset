@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 322b35aff0b1aad4396fe140ff365111, type: 3}
+  m_Name: HexTileData_Grassland
+  m_EditorClassIdentifier: 
+  Id: 3
+  Type: 1
+  TerrainName: Grassland
+  Description: 
+  Prefab: {fileID: 5889105343811967633, guid: db078f713409c93408877435f824ed27, type: 3}
+  isWalkable: 1
+  movementCost: 1
+  elevation: 0
+  moisture: 0
+  temperature: 20
+  population: 0
+  happiness: 1
+  hasHousing: 0
+  hasVegetation: 0
+  hasRoads: 0
+  hasRivers: 0
+  hasResources: 0
+  tileDurability: 100
+  isCorrupted: 0
+  ColorVariations: []
+  TextureVariations: []

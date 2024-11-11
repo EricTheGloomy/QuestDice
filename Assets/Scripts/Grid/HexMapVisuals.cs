@@ -5,26 +5,23 @@ using System.Collections.Generic;
 [RequireComponent(typeof(HexGrid))]
 public class HexMapVisuals : MonoBehaviour
 {
-    public GameObject basicHexPrefab;
-    public HexTileData[] tileDataArray;
-    public int startingVision = 3;
-    private HexCell startingLocation;   
+    public HexTileData[] tileDataArray;                    // Array of terrain types (HexTileData assets)
+    private HexCell startingLocation;                      // Initial starting location
+    public HexCell GetStartingLocation() => startingLocation; // For camera positioning or other uses
 
-    public HexCell GetStartingLocation() => startingLocation;
-
-    [Header("Noise Settings")]
-    public int seed;
-    public float scale = 10f;
-    public int octaves = 4;
-    [Range(0, 1)] public float persistence = 0.5f;
-    public float lacunarity = 2.0f;
-    public Vector2 offset;
-
-    public Dictionary<TileType, HexTileData> tileDataDictionary;
+    public Dictionary<int, HexTileData> tileDataDictionary; // Maps terrain ID to HexTileData
     public HexGrid hexGrid;
 
     [Header("Biome Config")]
-    public BiomeConfig biomeConfig;
+    public BiomeConfig biomeConfig; // Reference to the BiomeConfig scriptable object
+
+    [Header("Noise Settings")]
+    public int seed;                 // Seed for noise generation
+    public float scale = 10f;        // Scale of the noise
+    public int octaves = 4;          // Number of noise layers
+    [Range(0, 1)] public float persistence = 0.5f;
+    public float lacunarity = 2.0f;
+    public Vector2 offset;
 
     void Start()
     {
@@ -36,20 +33,20 @@ public class HexMapVisuals : MonoBehaviour
         SetRandomStartingLocation();
     }
 
-    // Initializes dictionary for tile types
+    // Initializes dictionary for terrain types based on ID
     private void InitializeTileDataDictionary()
     {
-        tileDataDictionary = new Dictionary<TileType, HexTileData>();
+        tileDataDictionary = new Dictionary<int, HexTileData>();
         foreach (var tileData in tileDataArray)
         {
             if (tileData != null)
             {
-                tileDataDictionary[tileData.Type] = tileData;
+                tileDataDictionary[tileData.Id] = tileData;  // Corrected to tileData.Id
             }
         }
     }
 
-    // Render tiles based on noise configuration and tile data
+    // Renders the map based on noise configuration and terrain data
     private void RenderMap()
     {
         foreach (var cellEntry in hexGrid.cells)
@@ -59,24 +56,24 @@ public class HexMapVisuals : MonoBehaviour
                 cell.OffsetCoordinates, hexGrid.UseFlatTopOrientation, hexGrid.tileSizeX, hexGrid.tileSizeZ
             );
 
-            TileType tileType = DetermineTileType(cell.OffsetCoordinates);
-            HexTileData tileData = tileDataDictionary[tileType];
-
-            if (tileData != null)
+            int terrainID = DetermineTerrainID(cell.OffsetCoordinates);
+            if (tileDataDictionary.TryGetValue(terrainID, out HexTileData tileData))
             {
-                GameObject tile = TileFactory.CreateTile(tileData, position, cell.transform);
                 cell.TerrainType = tileData;
-                cell.VisualRepresentation = tile;
+                cell.VisualRepresentation = TileFactory.CreateTile(tileData, position, cell.transform);
             }
         }
     }
 
-    private TileType DetermineTileType(Vector2 offsetCoords)
+    // Determine the terrain ID based on noise or biome logic
+    private int DetermineTerrainID(Vector2 offsetCoords)
     {
         float noiseValue = GenerateMultiOctaveNoise(offsetCoords);
-        return biomeConfig.GetTileTypeForNoise(noiseValue);
+        // Assuming biomeConfig.GetTerrainIDForNoise would return an ID based on noise
+        return biomeConfig.GetTerrainIDForNoise(noiseValue);
     }
 
+    // Generates multi-octave noise for biome variation
     private float GenerateMultiOctaveNoise(Vector2 offsetCoords)
     {
         if (scale <= 0) scale = 0.0001f; // Prevent division by zero
@@ -109,22 +106,21 @@ public class HexMapVisuals : MonoBehaviour
         return Mathf.InverseLerp(-1f, 1f, noiseHeight); 
     }
 
-    // Sets a random starting location on a grass tile and disables fog in the vicinity
     public void SetRandomStartingLocation()
     {
-        List<HexCell> grassTiles = new List<HexCell>();
+        List<HexCell> walkableTiles = new List<HexCell>();
         foreach (var cell in hexGrid.cells.Values)
         {
-            if (cell.TerrainType != null && cell.TerrainType.Type == TileType.Grass)
+            if (cell.TerrainType != null && cell.TerrainType.isWalkable)
             {
-                grassTiles.Add(cell);
+                walkableTiles.Add(cell);
             }
         }
 
-        if (grassTiles.Count > 0)
+        if (walkableTiles.Count > 0)
         {
-            startingLocation = grassTiles[Random.Range(0, grassTiles.Count)];
-            DisableFogInArea(startingLocation, startingVision);
+            startingLocation = walkableTiles[Random.Range(0, walkableTiles.Count)];
+            DisableFogInArea(startingLocation, 3);
         }
     }
 

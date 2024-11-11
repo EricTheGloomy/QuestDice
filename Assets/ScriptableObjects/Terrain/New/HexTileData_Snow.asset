@@ -10,14 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 322b35aff0b1aad4396fe140ff365111, type: 3}
-  m_Name: Hex_Water
+  m_Name: HexTileData_Snow
   m_EditorClassIdentifier: 
-  Id: 0
-  TerrainName: 
+  Id: 6
+  Type: 5
+  TerrainName: Snow
   Description: 
-  Prefab: {fileID: 3071199471604571427, guid: 9dba7d93cc4fbd947b2723059fd7020c, type: 3}
-  MovementCost: 1
-  Elevation: 0
-  IsWalkable: 1
+  Prefab: {fileID: 5889105343811967633, guid: 6f1a244d4dd782e4389233f59ad85719, type: 3}
+  isWalkable: 1
+  movementCost: 1
+  elevation: 0
+  moisture: 0
+  temperature: 20
+  population: 0
+  happiness: 1
+  hasHousing: 0
+  hasVegetation: 0
+  hasRoads: 0
+  hasRivers: 0
+  hasResources: 0
+  tileDurability: 100
+  isCorrupted: 0
   ColorVariations: []
   TextureVariations: []

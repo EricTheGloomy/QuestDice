@@ -4,6 +4,8 @@ using UnityEngine;
 public class TileScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private GameObject selectionMarker;  // Allows for flexibility in Unity Inspector
+    [SerializeField] private GameObject fogOfWar; 
+    [SerializeField] private GameObject groundObjects; 
 
     private void Awake()
     {
